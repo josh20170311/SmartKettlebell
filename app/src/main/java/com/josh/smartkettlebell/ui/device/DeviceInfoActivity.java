@@ -40,7 +40,7 @@ import java.util.Objects;
 public class DeviceInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private static final String TAG = "myTag";
+    private static final String TAG = "myTag : DeviceInfoActivity : ";
     public static final String EXTRA_DEVICE_ADDRESS = "com.josh.smartkattlebell.ui.device.EXTRA_DEVICE_ADDRESS";
     public static final String EXTRA_DEVICE_NAME = "com.josh.smartkattlebell.ui.device.EXTRA_DEVICE_NAME";
 
@@ -92,6 +92,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         registerReceiver(receiver,filter);
 
         bindService(new Intent(this,MyBluetoothService.class),connection,BIND_AUTO_CREATE);
+
     }
 
     private void setChart(LineChart chart){
@@ -276,7 +277,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d(TAG, "onReceive: DeviceInfoReceiver : action : "+action);
+            //Log.d(TAG, "onReceive: DeviceInfoReceiver : action : "+action);
 
             switch(Objects.requireNonNull(action)){
                 case MyBluetoothService.ACTION_CONNECTED:
@@ -285,7 +286,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                             .putString(SettingsFragment.KEY_DEVICE_ADDRESS,deviceAddress)
                             .apply();
                     sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_KEY_DEVICE_ADDRESS));
-                    Log.d(TAG, "onReceive: "+deviceAddress);
+                    //Log.d(TAG, "onReceive: "+deviceAddress);
                     runOnUiThread(() -> {
                         tv_status.setText(R.string.connected);
                     });
@@ -334,11 +335,20 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         }
     };
 
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause: ");
+        super.onPause();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: destroyed");
         mBluetoothService.disconnectDevice();
+        unbindService(connection);
+
+        Log.d(TAG, "onDestroy:");
     }
 
     private final ServiceConnection connection = new ServiceConnection(){
@@ -346,6 +356,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mBluetoothService = ((MyBluetoothService.LocalBinder)binder).getService();
+            Log.d(TAG, "onServiceConnected: "+mBluetoothService);
             if(!mBluetoothService.init()){
                 Log.d(TAG, "on ServiceConnected: init failed");
                 finish();
@@ -355,7 +366,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mBluetoothService = null;
+            Log.d(TAG, "onServiceDisconnected: "+name);
         }
     };
 

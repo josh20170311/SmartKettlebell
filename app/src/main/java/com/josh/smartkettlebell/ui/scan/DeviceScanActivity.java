@@ -52,7 +52,7 @@ public class DeviceScanActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            Log.d(TAG, "onScanResult: "+result);
+            //Log.d(TAG, "onScanResult: "+result);
             String name = result.getDevice().getName();
             if(name != null && name.equals("CC2650 SensorTag")){
                 listAdapter.addDevice(result);
@@ -64,14 +64,14 @@ public class DeviceScanActivity extends AppCompatActivity {
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
             for (ScanResult r : results){
-                Log.d(TAG, "onBatchScanResults: "+r);
+                //Log.d(TAG, "onBatchScanResults: "+r);
             }
         }
 
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
-            Log.d(TAG, "onScanFailed: ScanFailed error code : " + errorCode);
+            //Log.d(TAG, "onScanFailed: ScanFailed error code : " + errorCode);
         }
     };
     @Override

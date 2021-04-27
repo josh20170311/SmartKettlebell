@@ -30,7 +30,7 @@ public class MyBluetoothService extends Service {
 
     private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothGatt gatt;
-    private final MyBluetoothGattCallback callback = new MyBluetoothGattCallback(this,new MyDBHelper(this, MyContract.DATABASE_NAME));
+    private MyBluetoothGattCallback callback = new MyBluetoothGattCallback(this,new MyDBHelper(this, MyContract.DATABASE_NAME));
     private final Queue<Runnable> commandQueue = new LinkedList<>();
     private Boolean isCommandQueueLocked = false;
 
@@ -43,17 +43,28 @@ public class MyBluetoothService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind: ");
         return new LocalBinder();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind: ");
         return super.onUnbind(intent);
     }
 
     public void connectToDevice(String address){
         BluetoothDevice device = adapter.getRemoteDevice(address);
+        if(gatt != null){
+            gatt.disconnect();
+            gatt.close();
+        }
         gatt = device.connectGatt(this,true,callback);
     }
 
@@ -76,7 +87,7 @@ public class MyBluetoothService extends Service {
     }
 
     private void nextCommand(){
-        Log.d(TAG, "nextCommand: ");
+       // Log.d(TAG, "nextCommand: ");
         if(isCommandQueueLocked)return;
         if(commandQueue.size() < 1)return;
         Runnable r = commandQueue.peek();
@@ -119,6 +130,7 @@ public class MyBluetoothService extends Service {
     }
 
     public void disconnectDevice(){
+        Log.d(TAG, "disconnectDevice: ");
         gatt.disconnect();
     }
 
@@ -129,4 +141,13 @@ public class MyBluetoothService extends Service {
     public void stopRecord(){
         callback.stopRecord();
     }
+
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: service destroyed "+this);
+        super.onDestroy();
+    }
+
+
 }

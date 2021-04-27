@@ -2,10 +2,13 @@ package com.josh.smartkettlebell.ui.main;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.service.MyBluetoothService;
 import com.josh.smartkettlebell.ui.main.challenge.ChallengeFragment;
 import com.josh.smartkettlebell.ui.main.data.DataFragment;
 import com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment;
@@ -28,7 +32,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "myTAG";
+    private static final String TAG = "myTAG : MainActivity : ";
     public static final String ACTION_UPDATE_KEY_DEVICE_ADDRESS = "com.josh.smartkettlebell.ACTION_UPDATE_KEY_DEVICE_ADDRESS";
     Fragment trainingFragment;
     Fragment scheduleFragment;
@@ -40,6 +44,19 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     MaterialToolbar topAppBar;
+    MyBluetoothService myBluetoothService;
+    ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBluetoothService = ((MyBluetoothService.LocalBinder)service).getService();
+            Log.d(TAG, "onServiceConnected: "+myBluetoothService);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected: ");
+        }
+    };
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -58,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_UPDATE_KEY_DEVICE_ADDRESS);
         registerReceiver(receiver,filter);
-
+        bindService(new Intent(this, MyBluetoothService.class),connection,BIND_AUTO_CREATE);
     }
+
+
+
 
     private void setNavigation(){
         navigationView.setNavigationItemSelectedListener(item -> {

@@ -30,6 +30,8 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
 
     public MyBluetoothGattCallback(MyBluetoothService service, MyDBHelper dbHelper){
         this.service = service;
+        Log.d(TAG, "MyBluetoothGattCallback: "+service.toString());
+        Log.d(TAG, "MyBluetoothGattCallback: "+this.toString());
         this.dbHelper = dbHelper;
     }
 
@@ -39,12 +41,12 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
         super.onConnectionStateChange(gatt, status, newState);
         if(newState == BluetoothGatt.STATE_CONNECTED){
-            Log.d(TAG, "onConnectionStateChange: device connected");
+            Log.d(TAG, "onConnectionStateChange: device connected"+this+service);
             gatt.discoverServices();
             service.sendBroadcast(new Intent(ACTION_CONNECTED));
         }
         else if(newState == BluetoothGatt.STATE_DISCONNECTED){
-            Log.d(TAG, "onConnectionStateChange: device disconnected");
+            Log.d(TAG, "onConnectionStateChange: device disconnected"+this+service);
             service.sendBroadcast(new Intent(ACTION_DISCONNECTED));
         }
     }
@@ -53,11 +55,11 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
         super.onServicesDiscovered(gatt, status);
         if(status == BluetoothGatt.GATT_SUCCESS){
-            Log.d(TAG, "onServicesDiscovered: service discovering successful");
+            Log.d(TAG, "onServicesDiscovered: services discovering successful");
             service.serviceInit();
             service.sendBroadcast(new Intent(ACTION_SERVICE_DISCOVERED));
         }else{
-            Log.d(TAG, "onServicesDiscovered: service discovering failed : "+status);
+            Log.d(TAG, "onServicesDiscovered: services discovering failed : "+status);
         }
     }
 
@@ -85,7 +87,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic c) {
         super.onCharacteristicChanged(gatt, c);
-        Log.d(TAG, "onCharacteristicChanged: ");
+        //Log.d(TAG, "onCharacteristicChanged: ");
         long timeStamp = new Date().getTime();
         if(c.getUuid().equals(UUID_MOTION_DATA)) {
             byte[] value = c.getValue();
