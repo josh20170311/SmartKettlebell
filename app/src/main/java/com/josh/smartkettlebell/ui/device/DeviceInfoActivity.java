@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,7 +59,21 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_device_info);
 
         deviceAddress = getIntent().getStringExtra(EXTRA_DEVICE_ADDRESS);
+        Log.d(TAG, "Device Info : onCreate: "+deviceAddress);
+        if(deviceAddress == null || deviceAddress.equals("")){
+            deviceAddress = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(SettingsFragment.KEY_DEVICE_ADDRESS,"");
+            if(deviceAddress.equals("")||deviceAddress.equals(" ")){
+                finish();
+                return;
+            }
+        }
+
         deviceName = getIntent().getStringExtra(EXTRA_DEVICE_NAME);
+        if(deviceName == null){
+            deviceName = "";
+        }
+
 
         chart_acc = findViewById(R.id.chart_acc);
         chart_facc = findViewById(R.id.chart_facc);
@@ -284,14 +299,20 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                             .edit()
                             .putString(SettingsFragment.KEY_DEVICE_ADDRESS,deviceAddress)
+                            .putString(SettingsFragment.KEY_DEVICE_STATE,"Connected")
                             .apply();
-                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_KEY_DEVICE_ADDRESS));
+                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
                     //Log.d(TAG, "onReceive: "+deviceAddress);
                     runOnUiThread(() -> {
                         tv_status.setText(R.string.connected);
                     });
                     break;
                 case MyBluetoothService.ACTION_DISCONNECTED:
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putString(SettingsFragment.KEY_DEVICE_STATE,"Disconnected")
+                            .apply();
+                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
                     runOnUiThread(()->{
                         tv_status.setText(R.string.disconnected);
                     });
@@ -345,18 +366,23 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mBluetoothService.disconnectDevice();
-        unbindService(connection);
+        if(mBluetoothService != null)
+            mBluetoothService.disconnectDevice();
+
+        if(serviceBound)
+            unbindService(connection);
 
         Log.d(TAG, "onDestroy:");
     }
 
+    private boolean serviceBound = false;
     private final ServiceConnection connection = new ServiceConnection(){
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mBluetoothService = ((MyBluetoothService.LocalBinder)binder).getService();
             Log.d(TAG, "onServiceConnected: "+mBluetoothService);
+            serviceBound = true;
             if(!mBluetoothService.init()){
                 Log.d(TAG, "on ServiceConnected: init failed");
                 finish();
@@ -377,10 +403,12 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             if(isRecording){
                 isRecording = false;
                 btn_recordData.setText(R.string.recordData);
+                btn_recordData.setBackgroundColor(getColor(R.color.colorPrimary));
                 mBluetoothService.stopRecord();
             }else{
 //                recordId = dbHelper.createRecord(et_tag.getText().toString());
                 btn_recordData.setText(R.string.recording);
+                btn_recordData.setBackgroundColor(Color.RED);
                 isRecording = true;
                 mBluetoothService.startRecord(et_tag.getText().toString());
             }

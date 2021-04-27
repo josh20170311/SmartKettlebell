@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     public static String KEY_DEVICE_ADDRESS = "com.josh.smartkettlebell.KEY_DEVICE_ADDRESS";
+    public static String KEY_DEVICE_STATE = "com.josh.smartkettlebell.KEY_DEVICE_STATE";
     private String rootKey;
 
     @Override

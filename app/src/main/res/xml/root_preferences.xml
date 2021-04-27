@@ -5,12 +5,23 @@
                 app:title="Device Address"
                 app:useSimpleSummaryProvider="true"
                 app:enabled="false"/>
+<!--            <EditTextPreference app:key="com.josh.smartkettlebell.KEY_DEVICE_STATE"-->
+<!--                app:title="Device State"-->
+<!--                app:useSimpleSummaryProvider="true"-->
+<!--                app:enabled="false"/>-->
             <Preference
                 app:key="scanActivity"
                 app:title="Scan Device">
                 <intent
                     android:targetPackage="com.josh.smartkettlebell"
                     android:targetClass="com.josh.smartkettlebell.ui.scan.DeviceScanActivity"/>
+            </Preference>
+            <Preference
+                app:key="Sensor Browser"
+                app:title="Sensor Browser">
+                <intent
+                    android:targetPackage="com.josh.smartkettlebell"
+                    android:targetClass="com.josh.smartkettlebell.ui.device.DeviceInfoActivity"/>
             </Preference>
         </PreferenceCategory>
 

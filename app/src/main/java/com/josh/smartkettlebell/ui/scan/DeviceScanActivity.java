@@ -106,7 +106,8 @@ public class DeviceScanActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == EnableBluetoothRequestCode) {
             if(resultCode == 0)
-                requestEnableBluetooth();
+                finish();
+//                requestEnableBluetooth();
             else
                 scanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
 

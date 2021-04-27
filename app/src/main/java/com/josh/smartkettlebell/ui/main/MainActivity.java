@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
@@ -27,13 +28,12 @@ import com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.TrainingFragment;
 
-import java.text.BreakIterator;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "myTAG : MainActivity : ";
-    public static final String ACTION_UPDATE_KEY_DEVICE_ADDRESS = "com.josh.smartkettlebell.ACTION_UPDATE_KEY_DEVICE_ADDRESS";
+    public static final String ACTION_UPDATE_SETTINGS_PREFERENCE = "com.josh.smartkettlebell.ACTION_UPDATE_SETTINGS_PREFERENCE";
     Fragment trainingFragment;
     Fragment scheduleFragment;
     Fragment dataFragment;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         setNavigation();
         Log.d(TAG, "onCreate: finished");
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_UPDATE_KEY_DEVICE_ADDRESS);
+        filter.addAction(ACTION_UPDATE_SETTINGS_PREFERENCE);
         registerReceiver(receiver,filter);
         bindService(new Intent(this, MyBluetoothService.class),connection,BIND_AUTO_CREATE);
     }
@@ -126,10 +126,19 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(Objects.equals(intent.getAction(), ACTION_UPDATE_KEY_DEVICE_ADDRESS)){
+            if(Objects.equals(intent.getAction(), ACTION_UPDATE_SETTINGS_PREFERENCE)){
                 ((SettingsFragment)settingFragment).update();
             }
         }
     };
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(SettingsFragment.KEY_DEVICE_STATE,"Disconnected")
+                .apply();
+
+    }
 }

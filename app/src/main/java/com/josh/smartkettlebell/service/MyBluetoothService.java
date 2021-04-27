@@ -131,7 +131,8 @@ public class MyBluetoothService extends Service {
 
     public void disconnectDevice(){
         Log.d(TAG, "disconnectDevice: ");
-        gatt.disconnect();
+        if(gatt != null)
+            gatt.disconnect();
     }
 
     public void startRecord(String tag){
