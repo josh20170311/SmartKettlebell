@@ -54,10 +54,10 @@ public class DeviceScanActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             Log.d(TAG, "onScanResult: "+result);
             String name = result.getDevice().getName();
-//            if(name != null && name.equals("CC2650 SensorTag")){
+            if(name != null && name.equals("CC2650 SensorTag")){
                 listAdapter.addDevice(result);
                 listAdapter.notifyDataSetChanged();
-//            }
+            }
         }
 
         @Override

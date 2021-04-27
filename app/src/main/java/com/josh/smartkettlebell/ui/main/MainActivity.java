@@ -1,6 +1,10 @@
 package com.josh.smartkettlebell.ui.main;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -19,9 +23,13 @@ import com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.TrainingFragment;
 
+import java.text.BreakIterator;
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "myTAG";
+    public static final String ACTION_UPDATE_KEY_DEVICE_ADDRESS = "com.josh.smartkettlebell.ACTION_UPDATE_KEY_DEVICE_ADDRESS";
     Fragment trainingFragment;
     Fragment scheduleFragment;
     Fragment dataFragment;
@@ -47,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         setNavigation();
         Log.d(TAG, "onCreate: finished");
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_KEY_DEVICE_ADDRESS);
+        registerReceiver(receiver,filter);
 
     }
 
@@ -92,5 +103,13 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.main_container, f);
         transaction.commit();
     }
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(Objects.equals(intent.getAction(), ACTION_UPDATE_KEY_DEVICE_ADDRESS)){
+                ((SettingsFragment)settingFragment).update();
+            }
+        }
+    };
 
 }

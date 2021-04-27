@@ -19,14 +19,14 @@ import static com.josh.smartkettlebell.util.SensorTagUUID.*;
 public class MyBluetoothService extends Service {
 
     private final String TAG = "myTag";
-    public static final String ACTION_SHOW_DATA = "com.josh.smartkattlebell.ACTION_SHOW_DATA";
-    public static final String ACTION_CONNECTED = "com.josh.smartkattlebell.ACTION_CONNECTED";
-    public static final String ACTION_DISCONNECTED = "com.josh.smartkattlebell.ACTION_DISCONNECTED";
-    public static final String ACTION_SERVICE_DISCOVERED = "com.josh.smartkattlebell.ACTION_SERVICE_DISCOVERED";
-    public static final String EXTRA_MOTION_DATA = "com.josh.smartkattlebell.EXTRA_MOTION_DATA";
-    public static final String EXTRA_MOTION_FACC_DATA = "com.josh.smartkattlebell.EXTRA_MOTION_FACC_DATA";
-    public static final String EXTRA_MOTION_AHRS_DATA = "com.josh.smartkattlebell.EXTRA_MOTION_AHRS_DATA";
-    public static final String EXTRA_MOTION_TIMESTAMP = "com.josh.smartkattlebell.EXTRA_MOTION_TIMESTAMP";
+    public static final String ACTION_SHOW_DATA = "com.josh.smartkettlebell.ACTION_SHOW_DATA";
+    public static final String ACTION_CONNECTED = "com.josh.smartkettlebell.ACTION_CONNECTED";
+    public static final String ACTION_DISCONNECTED = "com.josh.smartkettlebell.ACTION_DISCONNECTED";
+    public static final String ACTION_SERVICE_DISCOVERED = "com.josh.smartkettlebell.ACTION_SERVICE_DISCOVERED";
+    public static final String EXTRA_MOTION_DATA = "com.josh.smartkettlebell.EXTRA_MOTION_DATA";
+    public static final String EXTRA_MOTION_FACC_DATA = "com.josh.smartkettlebell.EXTRA_MOTION_FACC_DATA";
+    public static final String EXTRA_MOTION_AHRS_DATA = "com.josh.smartkettlebell.EXTRA_MOTION_AHRS_DATA";
+    public static final String EXTRA_MOTION_TIMESTAMP = "com.josh.smartkettlebell.EXTRA_MOTION_TIMESTAMP";
 
     private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothGatt gatt;

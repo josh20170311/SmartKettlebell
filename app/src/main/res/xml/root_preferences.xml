@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
         <PreferenceCategory app:title="Device">
-            <EditTextPreference app:key="Device"
+            <EditTextPreference app:key="com.josh.smartkettlebell.KEY_DEVICE_ADDRESS"
                 app:title="Device Address"
                 app:useSimpleSummaryProvider="true"
                 app:enabled="false"/>

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -28,6 +29,8 @@ import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.db.MyContract;
 import com.josh.smartkettlebell.db.MyDBHelper;
 import com.josh.smartkettlebell.service.MyBluetoothService;
+import com.josh.smartkettlebell.ui.main.MainActivity;
+import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.util.*;
 
 import java.util.ArrayList;
@@ -277,6 +280,12 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
             switch(Objects.requireNonNull(action)){
                 case MyBluetoothService.ACTION_CONNECTED:
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putString(SettingsFragment.KEY_DEVICE_ADDRESS,deviceAddress)
+                            .apply();
+                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_KEY_DEVICE_ADDRESS));
+                    Log.d(TAG, "onReceive: "+deviceAddress);
                     runOnUiThread(() -> {
                         tv_status.setText(R.string.connected);
                     });

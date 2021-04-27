@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.util.Log;
 
 
+import androidx.preference.PreferenceManager;
+
 import com.josh.smartkettlebell.db.MyDBHelper;
 import com.josh.smartkettlebell.util.AHRS;
 import com.josh.smartkettlebell.util.Decoder;

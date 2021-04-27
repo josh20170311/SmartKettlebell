@@ -34,19 +34,7 @@ public class TrainingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_training, container, false);
-
-
-
-        //設定Button
-        btn_scan = view.findViewById(R.id.btn_scan);
-        btn_scan.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), DeviceScanActivity.class);
-            startActivity(intent);
-        });
-
-
-        return view;
+        return inflater.inflate(R.layout.fragment_training, container, false);
     }
 
     @Override
