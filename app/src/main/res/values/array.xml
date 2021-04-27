@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array
+        name = "tabs_name">
+        <item>Home</item>
+        <item>Training</item>
+        <item>Schedule</item>
+        <item>Analyze</item>
+        <item>DailyChallenge</item>
+        <item>Setting</item>
+    </array>
+</resources>
