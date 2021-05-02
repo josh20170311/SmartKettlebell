@@ -30,8 +30,8 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
 
     public MyBluetoothGattCallback(MyBluetoothService service, MyDBHelper dbHelper){
         this.service = service;
-        Log.d(TAG, "MyBluetoothGattCallback: "+service.toString());
-        Log.d(TAG, "MyBluetoothGattCallback: "+this.toString());
+//        Log.d(TAG, "MyBluetoothGattCallback: "+service.toString());
+//        Log.d(TAG, "MyBluetoothGattCallback: "+this.toString());
         this.dbHelper = dbHelper;
     }
 

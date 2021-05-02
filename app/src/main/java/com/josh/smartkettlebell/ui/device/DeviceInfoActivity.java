@@ -308,11 +308,6 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                     });
                     break;
                 case MyBluetoothService.ACTION_DISCONNECTED:
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .edit()
-                            .putString(SettingsFragment.KEY_DEVICE_STATE,"Disconnected")
-                            .apply();
-                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
                     runOnUiThread(()->{
                         tv_status.setText(R.string.disconnected);
                     });
