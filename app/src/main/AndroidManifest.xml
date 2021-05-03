@@ -16,7 +16,8 @@
         android:roundIcon="@drawable/ic_kettlebell"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.main.training.AddExerciseActivity"></activity>
+        <activity android:name=".ui.main.training.trainingplan.training.TrainingActivity"></activity>
+        <activity android:name=".ui.main.training.trainingplan.addexercise.AddExerciseActivity" />
         <activity
             android:name=".ui.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -28,7 +29,7 @@
         </activity>
         <activity android:name=".ui.device.DeviceInfoActivity" />
         <activity android:name=".ui.scan.DeviceScanActivity" />
-        <activity android:name=".ui.main.training.TrainingPlanActivity" />
+        <activity android:name=".ui.main.training.trainingplan.TrainingPlanActivity" />
 
         <service
             android:name=".service.MyBluetoothService"

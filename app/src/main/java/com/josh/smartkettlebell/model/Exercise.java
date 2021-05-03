@@ -1,8 +1,9 @@
 package com.josh.smartkettlebell.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Exercise {
+public class Exercise implements Serializable {
     String name;
     int number;
 

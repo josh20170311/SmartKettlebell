@@ -1,4 +1,4 @@
-package com.josh.smartkettlebell.ui.main.training;
+package com.josh.smartkettlebell.ui.main.training.trainingplan.addexercise;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.TrainingPlanActivity;
 
 public class AddExerciseActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "myTag";
@@ -35,11 +35,11 @@ public class AddExerciseActivity extends AppCompatActivity implements View.OnCli
 
 
 
-        iv_swing = findViewById(R.id.iv_1);
-        iv_squat = findViewById(R.id.iv_2);
-        iv_deadlift = findViewById(R.id.iv_3);
-        iv_row = findViewById(R.id.iv_4);
-        iv_push = findViewById(R.id.iv_5);
+        iv_swing = findViewById(R.id.iv_swing);
+        iv_squat = findViewById(R.id.iv_squat);
+        iv_deadlift = findViewById(R.id.iv_deadlift);
+        iv_row = findViewById(R.id.iv_row);
+        iv_push = findViewById(R.id.iv_push);
         btn = findViewById(R.id.btn_add_exercise);
         et_exercise_number = findViewById(R.id.et_exercise_number);
         toolbar = findViewById(R.id.toolbar_add_exercise);
@@ -121,20 +121,19 @@ public class AddExerciseActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.iv_1:
-            case R.id.iv_2:
-            case R.id.iv_3:
-            case R.id.iv_4:
-            case R.id.iv_5:
-                Log.d(TAG, "onClick: "+v.getId());
+            case R.id.iv_swing:
+            case R.id.iv_squat:
+            case R.id.iv_deadlift:
+            case R.id.iv_row:
+            case R.id.iv_push:
                 currentIV.setImageAlpha(255);
                 currentIV = (ImageView)v;
                 currentIV.setImageAlpha(128);
                 break;
             case R.id.btn_add_exercise:
-                Log.d(TAG, "onClick: "+v.getId());
                 Intent intent = new Intent();
                 intent.putExtra(TrainingPlanActivity.EXTRA_EXERCISE_NAME,currentIV.getTag().toString());
+
                 String str_action_number = et_exercise_number.getText().toString();
                 int number = Integer.parseInt(str_action_number);
                 intent.putExtra(TrainingPlanActivity.EXTRA_EXERCISE_NUMBER,number);

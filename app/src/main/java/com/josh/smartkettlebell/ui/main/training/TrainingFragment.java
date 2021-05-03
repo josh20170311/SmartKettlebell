@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.TrainingPlanActivity;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 
 public class TrainingFragment extends Fragment {
     static final int ADD_PLAN_REQUEST_CODE = 101;
@@ -28,6 +30,11 @@ public class TrainingFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_training, container, false);
         FloatingActionButton fab = view.findViewById(R.id.fab_add_action);
+        view.findViewById(R.id.btn_test).setOnClickListener(e -> {
+            startActivity(new Intent(getContext(), TrainingActivity.class));
+        });
+
+
         fab.setOnClickListener(e -> {
 
             Intent intent = new Intent(getActivity(), TrainingPlanActivity.class);

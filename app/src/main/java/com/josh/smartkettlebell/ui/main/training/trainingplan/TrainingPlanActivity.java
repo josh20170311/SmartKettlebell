@@ -1,4 +1,4 @@
-package com.josh.smartkettlebell.ui.main.training;
+package com.josh.smartkettlebell.ui.main.training.trainingplan;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.model.Exercise;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.addexercise.AddExerciseActivity;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,7 +31,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
     public static int RESULT_CODE_ADD_EXERCISE = 301;
     public static int REQUEST_CODE_EDIT_EXERCISE = 400;
     public static int RESULT_CODE_EDIT_EXERCISE = 401;
-    Button btn_start_training;
+    Button btn_start;
     FloatingActionButton fab;
     RecyclerView rv;
     ItemTouchHelper touchHelper;
@@ -41,7 +43,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
 
-        btn_start_training = findViewById(R.id.btn_start_training);
+        btn_start = findViewById(R.id.btn_start_training);
         fab = findViewById(R.id.fab_add_action);
         rv = findViewById(R.id.rv_action_plan_list);
 
@@ -85,9 +87,10 @@ public class TrainingPlanActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE_ADD_EXERCISE);
         });
 
-        btn_start_training.setOnClickListener(e -> {
-//            setResult(TrainingFragment.ADD_PLAN_REQUEST_CODE,getIntent());
-//            finish();
+        btn_start.setOnClickListener(e -> {
+            Intent intent = new Intent(this, TrainingActivity.class);
+            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
+            startActivity(intent);
         });
 
 

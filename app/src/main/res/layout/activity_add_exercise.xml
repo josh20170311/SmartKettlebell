@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context=".ui.main.training.TrainingPlanActivity">
+    tools:context=".ui.main.training.trainingplan.TrainingPlanActivity">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -24,10 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ui.main.training.AddExerciseActivity">
+        tools:context=".ui.main.training.trainingplan.addexercise.AddExerciseActivity">
 
         <ImageView
-            android:id="@+id/iv_1"
+            android:id="@+id/iv_swing"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginStart="36dp"
@@ -40,19 +40,19 @@
             app:srcCompat="@drawable/swing" />
 
         <ImageView
-            android:id="@+id/iv_2"
+            android:id="@+id/iv_squat"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:adjustViewBounds="true"
             android:paddingBottom="0dp"
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_1"
-            app:layout_constraintTop_toTopOf="@+id/iv_1"
+            app:layout_constraintStart_toEndOf="@+id/iv_swing"
+            app:layout_constraintTop_toTopOf="@+id/iv_swing"
             app:srcCompat="@drawable/squat" />
 
         <ImageView
-            android:id="@+id/iv_3"
+            android:id="@+id/iv_deadlift"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginStart="36dp"
@@ -61,11 +61,11 @@
             android:paddingBottom="0dp"
             android:scaleType="fitXY"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_1"
+            app:layout_constraintTop_toBottomOf="@+id/iv_swing"
             app:srcCompat="@drawable/deadlift" />
 
         <ImageView
-            android:id="@+id/iv_4"
+            android:id="@+id/iv_row"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginStart="36dp"
@@ -74,12 +74,12 @@
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/iv_3"
-            app:layout_constraintTop_toTopOf="@+id/iv_3"
+            app:layout_constraintStart_toEndOf="@+id/iv_deadlift"
+            app:layout_constraintTop_toTopOf="@+id/iv_deadlift"
             app:srcCompat="@drawable/row" />
 
         <ImageView
-            android:id="@+id/iv_5"
+            android:id="@+id/iv_push"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginStart="36dp"
@@ -88,7 +88,7 @@
             android:paddingBottom="0dp"
             android:scaleType="fitXY"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_3"
+            app:layout_constraintTop_toBottomOf="@+id/iv_deadlift"
             app:srcCompat="@drawable/push" />
 
         <Button

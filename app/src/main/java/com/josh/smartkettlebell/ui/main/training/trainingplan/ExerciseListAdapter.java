@@ -1,4 +1,4 @@
-package com.josh.smartkettlebell.ui.main.training;
+package com.josh.smartkettlebell.ui.main.training.trainingplan;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.model.Exercise;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.addexercise.AddExerciseActivity;
 
 import java.util.LinkedList;
 
@@ -45,7 +46,7 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
             //這裡是interface的匿名物件，不能直接傳數值，因為當來源的數值變動時，本地的數值不會變。
             MyViewHolder viewHolder = (MyViewHolder) e.getTag();//找出自己的viewHolder
             int true_position = viewHolder.getAdapterPosition();
-            Intent intent = new Intent(trainingPlanActivity,AddExerciseActivity.class);
+            Intent intent = new Intent(trainingPlanActivity, AddExerciseActivity.class);
             intent.putExtra(TrainingPlanActivity.EXTRA_EXERCISE_POSITION,true_position);
             intent.putExtra(TrainingPlanActivity.EXTRA_EXERCISE_NAME,viewHolder.tv_action_name.getText().toString());
             intent.putExtra(TrainingPlanActivity.EXTRA_EXERCISE_NUMBER,viewHolder.tv_action_number.getText().toString());
