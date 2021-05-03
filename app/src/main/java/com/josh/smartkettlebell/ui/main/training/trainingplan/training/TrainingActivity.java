@@ -1,6 +1,7 @@
 package com.josh.smartkettlebell.ui.main.training.trainingplan.training;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.interfaces.ICounter;
 import com.josh.smartkettlebell.model.Exercise;
 import com.josh.smartkettlebell.service.MyBluetoothService;
+import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.util.ZhangPhilGifView;
 
 import java.util.ArrayList;
@@ -34,11 +37,20 @@ public class TrainingActivity extends AppCompatActivity {
     long time = 0;
     LinkedList<Exercise> exerciseList;
     int currentExerciseIndex = 0;
+    int count = 0;
     MyBluetoothService myBluetoothService;
+    TrainingActivity trainingActivity = this;
     ServiceConnection serviceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             myBluetoothService = ((MyBluetoothService.LocalBinder)service).getService();
+            myBluetoothService.init();
+            myBluetoothService.connectToDevice(
+                    PreferenceManager.getDefaultSharedPreferences(
+                            getApplicationContext()).getString(SettingsFragment.KEY_DEVICE_ADDRESS,
+                            null));
+            myBluetoothService.setTrainingActivity(trainingActivity);
+
         }
 
         @Override
@@ -117,6 +129,18 @@ public class TrainingActivity extends AppCompatActivity {
             case "push":
                 gv_demo.setGif(R.drawable.push_gif);
                 break;
+        }
+    }
+    public void count(float[] data){
+        ICounter counter = new ICounter() {
+            @Override
+            public int count(float[] input) {
+                return 0;
+            }
+        };
+        if(counter.count(data) > 0){
+            count++;
+            tv_count.setText(count);
         }
     }
 }

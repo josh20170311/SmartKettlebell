@@ -11,6 +11,8 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import com.josh.smartkettlebell.db.MyDBHelper;
+import com.josh.smartkettlebell.interfaces.ICounter;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 import com.josh.smartkettlebell.util.AHRS;
 import com.josh.smartkettlebell.util.Decoder;
 import com.josh.smartkettlebell.util.LowPassFilter;
@@ -22,6 +24,7 @@ import static com.josh.smartkettlebell.util.SensorTagUUID.*;
 import static com.josh.smartkettlebell.service.MyBluetoothService.*;
 
 public class MyBluetoothGattCallback extends BluetoothGattCallback {
+    private TrainingActivity trainingActivity;
     private final String TAG = "myTag";
     private final MyBluetoothService service;
     private final MyDBHelper dbHelper;
@@ -33,6 +36,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
 //        Log.d(TAG, "MyBluetoothGattCallback: "+service.toString());
 //        Log.d(TAG, "MyBluetoothGattCallback: "+this.toString());
         this.dbHelper = dbHelper;
+        this.trainingActivity = service.getTrainingActivity();
     }
 
 
@@ -55,7 +59,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
         super.onServicesDiscovered(gatt, status);
         if(status == BluetoothGatt.GATT_SUCCESS){
-            Log.d(TAG, "onServicesDiscovered: services discovering successful");
+//            Log.d(TAG, "onServicesDiscovered: services discovering successful");
             service.serviceInit();
             service.sendBroadcast(new Intent(ACTION_SERVICE_DISCOVERED));
         }else{
@@ -72,7 +76,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     @Override
     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         super.onCharacteristicWrite(gatt, characteristic, status);
-        Log.d(TAG, "onCharacteristicWrite: ");
+//        Log.d(TAG, "onCharacteristicWrite: ");
         if(status == BluetoothGatt.GATT_SUCCESS){
             service.completedCommand();
         }
@@ -94,6 +98,10 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
 //            Log.d(TAG, "onCharacteristicChanged: " + Arrays.toString(value));
             float[] data = Decoder.decodeMotionData(value);
             assert data != null;
+            if(trainingActivity != null){
+                trainingActivity.count(data);
+            }
+
             float[] facc_data = new float[3];
             float[] ahrs_data = ahrs.Update(Arrays.copyOfRange(data,0,3),Arrays.copyOfRange(data,3,6));
             facc_data[0] = filters[0].next(data[0]);
@@ -117,7 +125,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
     @Override
     public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
         super.onDescriptorWrite(gatt, descriptor, status);
-        Log.d(TAG, "onDescriptorWrite: ");
+//        Log.d(TAG, "onDescriptorWrite: ");
         if(status == BluetoothGatt.GATT_SUCCESS){
             service.completedCommand();
         }

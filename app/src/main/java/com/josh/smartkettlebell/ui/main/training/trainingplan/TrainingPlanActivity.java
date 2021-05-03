@@ -1,12 +1,16 @@
 package com.josh.smartkettlebell.ui.main.training.trainingplan;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +19,11 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.model.Exercise;
+import com.josh.smartkettlebell.service.MyBluetoothService;
+import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.addexercise.AddExerciseActivity;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
+import com.josh.smartkettlebell.ui.scan.DeviceScanActivity;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -88,6 +95,17 @@ public class TrainingPlanActivity extends AppCompatActivity {
         });
 
         btn_start.setOnClickListener(e -> {
+            SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(this);
+            String address = preference.getString(SettingsFragment.KEY_DEVICE_ADDRESS,null);
+            if(address == null || address.equals("N/A")){
+                new AlertDialog.Builder(this)
+                        .setTitle("Please Set a Device")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            Intent intent = new Intent(this, DeviceScanActivity.class);
+                            startActivity(intent);
+                        }).show();
+                return;
+            }
             Intent intent = new Intent(this, TrainingActivity.class);
             intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
             startActivity(intent);

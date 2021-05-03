@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.josh.smartkettlebell.db.MyContract;
 import com.josh.smartkettlebell.db.MyDBHelper;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -30,11 +31,28 @@ public class MyBluetoothService extends Service {
 
     private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothGatt gatt;
-    private MyBluetoothGattCallback callback = new MyBluetoothGattCallback(this,new MyDBHelper(this, MyContract.DATABASE_NAME));
+    private final MyBluetoothGattCallback callback = new MyBluetoothGattCallback(this,new MyDBHelper(this, MyContract.DATABASE_NAME));
     private final Queue<Runnable> commandQueue = new LinkedList<>();
     private Boolean isCommandQueueLocked = false;
+    private float[] currentData;
 
+    public TrainingActivity getTrainingActivity() {
+        return trainingActivity;
+    }
 
+    public void setTrainingActivity(TrainingActivity trainingActivity) {
+        this.trainingActivity = trainingActivity;
+    }
+
+    private TrainingActivity trainingActivity;
+
+    public float[] getCurrentData() {
+        return currentData;
+    }
+
+    public void setCurrentData(float[] currentData) {
+        this.currentData = currentData;
+    }
 
     public class LocalBinder extends Binder {
         public MyBluetoothService getService(){
@@ -60,7 +78,15 @@ public class MyBluetoothService extends Service {
     }
 
     public void connectToDevice(String address){
+        if(address == null){
+            Log.d(TAG, "connectToDevice: address null");
+            return;
+        }
         BluetoothDevice device = adapter.getRemoteDevice(address);
+        if(device == null){
+            Log.d(TAG, "connectToDevice: device null");
+            return;
+        }
         if(gatt != null){
             gatt.disconnect();
             gatt.close();
