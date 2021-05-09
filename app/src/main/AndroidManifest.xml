@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -16,7 +18,8 @@
         android:roundIcon="@drawable/ic_kettlebell"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.main.training.trainingplan.training.TrainingActivity"></activity>
+        <activity android:name=".ui.main.schedule.EventsAdderDialogActivity"/>
+        <activity android:name=".ui.main.training.trainingplan.training.TrainingActivity" />
         <activity android:name=".ui.main.training.trainingplan.addexercise.AddExerciseActivity" />
         <activity
             android:name=".ui.main.MainActivity"
@@ -27,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.device.DeviceInfoActivity" />
+        <activity android:name=".ui.device.DeviceBrowserActivity" />
         <activity android:name=".ui.scan.DeviceScanActivity" />
         <activity android:name=".ui.main.training.trainingplan.TrainingPlanActivity" />
 

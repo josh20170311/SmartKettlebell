@@ -100,6 +100,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
             assert data != null;
             if(trainingActivity != null){
                 trainingActivity.count(data);
+                trainingActivity.receiveData(data,new Date().getTime());
             }
 
             float[] facc_data = new float[3];
@@ -131,9 +132,9 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
         }
     }
 
-    public void startRecord(String tag){
+    public void startRecord(String exerciseName,long trainingID, int number){
         if(!is_recording){
-            recordId = dbHelper.createRecord(tag);
+            recordId = dbHelper.createRecord(exerciseName,trainingID,number);
             is_recording = true;
         }
     }

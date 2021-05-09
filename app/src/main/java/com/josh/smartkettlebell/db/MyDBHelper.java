@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.icu.text.AlphabeticIndex;
 
 import java.util.Date;
 
@@ -19,46 +20,63 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor getRecords(){
-        return getReadableDatabase().rawQuery("SELECT * FROM "+RecordEntry.TABLE_NAME,new String[]{});
-    }
-    public Cursor getData(int RecordId){
-        return getReadableDatabase().rawQuery("SELECT * FROM "+DataEntry.TABLE_NAME
-                +" WHERE _id = ?;",new String[]{RecordId+""});
+    public Cursor getRecords() {
+        return getReadableDatabase().rawQuery("SELECT * FROM " + RecordEntry.TABLE_NAME, new String[]{});
     }
 
-    public void insertData(float[] data, float[] facc_data,long recordId,long timeStamp){
+    public Cursor getData(int RecordId) {
+        return getReadableDatabase().rawQuery("SELECT * FROM " + DataEntry.TABLE_NAME
+                + " WHERE _id = ?;", new String[]{RecordId + ""});
+    }
+
+    public void insertData(float[] data, float[] facc_data, long recordId, long timeStamp) {
         ContentValues values = new ContentValues();
-        values.put(DataEntry.COLUMN_RECORD_ID,recordId);
-        values.put(DataEntry.COLUMN_TIMESTAMP,timeStamp);
+        values.put(DataEntry.COLUMN_RECORD_ID, recordId);
+        values.put(DataEntry.COLUMN_TIMESTAMP, timeStamp);
 
         String[] columns = DataEntry.COLUMNS_DATA;
-        for (int i = 0; i < columns.length-3; i++) {
-            values.put(columns[i],data[i]);
+        for (int i = 0; i < columns.length - 3; i++) {
+            values.put(columns[i], data[i]);
         }
 
-        for (int i = columns.length -3; i < columns.length; i++) {
-            values.put(columns[i],facc_data[i - columns.length + 3]);
+        for (int i = columns.length - 3; i < columns.length; i++) {
+            values.put(columns[i], facc_data[i - columns.length + 3]);
         }
 
-        getWritableDatabase().insert(DataEntry.TABLE_NAME,null,values);
+        getWritableDatabase().insert(DataEntry.TABLE_NAME, null, values);
     }
-    public long createRecord(String tag){
+
+    public long createRecord(String exerciseName,long trainingID,int number) {
         ContentValues values = new ContentValues();
         values.put(RecordEntry.COLUMN_TIMESTAMP, new Date().getTime());
-        values.put(RecordEntry.COLUMN_TAG, tag);
-        return getWritableDatabase().insert(RecordEntry.TABLE_NAME,null,values);
+        values.put(RecordEntry.COLUMN_TRAINING_ID,trainingID);
+        values.put(RecordEntry.COLUMN_EXERCISE_NAME, exerciseName);
+        values.put(RecordEntry.COLUMN_NUMBER, number);
+        return getWritableDatabase().insert(RecordEntry.TABLE_NAME, null, values);
     }
 
-    public void deleteRecord(String id){
-        getWritableDatabase().delete(RecordEntry.TABLE_NAME,"_id = ?",new String[]{id});
+    public long createTraining(long duration){
+        ContentValues values = new ContentValues();
+        values.put(TrainingEntry.COLUMN_DATE,new Date().getTime());
+        values.put(TrainingEntry.COLUMN_DURATION,duration);
+        return getWritableDatabase().insert(TrainingEntry.TABLE_NAME,null,values);
+    }
+
+    public void deleteRecord(String id) {
+        getWritableDatabase().delete(RecordEntry.TABLE_NAME, "_id = ?", new String[]{id});
         getWritableDatabase().delete(DataEntry.TABLE_NAME,
-                DataEntry.COLUMN_RECORD_ID+"= ?",
+                DataEntry.COLUMN_RECORD_ID + "= ?",
                 new String[]{id});
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        createTable_Data(db);
+        createTable_Record(db);
+        createTable_Training(db);
+    }
+
+    private void createTable_Data(SQLiteDatabase db) {
 
         String sqlCreateDataTable = String.format(
                 "CREATE TABLE %s (" +
@@ -95,27 +113,50 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 DataEntry.COLUMN_FACC_Y,
                 DataEntry.COLUMN_FACC_Z
         );
+
+        db.execSQL(sqlCreateDataTable);
+    }
+
+    private void createTable_Record(SQLiteDatabase db) {
         String sqlCreateRecordTable = String.format(
                 "CREATE TABLE %s (" +
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT ," +
                         "%s INTEGER NOT NULL, " +
-                        "%s TEXT NOT NULL " +
+                        "%s TEXT NOT NULL," +
+                        "%s INTEGER ," +
+                        "%s INTEGER NOT NULL" +
                         ");",
                 RecordEntry.TABLE_NAME,
                 RecordEntry._ID,
                 RecordEntry.COLUMN_TIMESTAMP,
-                RecordEntry.COLUMN_TAG
+                RecordEntry.COLUMN_EXERCISE_NAME,
+                RecordEntry.COLUMN_TRAINING_ID,
+                RecordEntry.COLUMN_NUMBER
 
         );
-
-        db.execSQL(sqlCreateDataTable);
         db.execSQL(sqlCreateRecordTable);
+    }
+
+    private void createTable_Training(SQLiteDatabase db) {
+        String sqlCreateTrainingTable = String.format(
+                "CREATE TABLE %s (" +
+                        "%s INTEGER PRIMARY KEY AUTOINCREMENT ," +
+                        "%s INTEGER NOT NULL, " +
+                        "%s INTEGER NOT NULL " +
+                        ");",
+                TrainingEntry.TABLE_NAME,
+                TrainingEntry._ID,
+                TrainingEntry.COLUMN_DATE,
+                TrainingEntry.COLUMN_DURATION);
+
+        db.execSQL(sqlCreateTrainingTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+DataEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS "+RecordEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DataEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + RecordEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TrainingEntry.TABLE_NAME);
         onCreate(db);
     }
 }

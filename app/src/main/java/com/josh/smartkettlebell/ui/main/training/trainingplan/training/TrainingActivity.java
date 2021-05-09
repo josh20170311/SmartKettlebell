@@ -12,14 +12,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.db.MyContract;
+import com.josh.smartkettlebell.db.MyDBHelper;
 import com.josh.smartkettlebell.interfaces.ICounter;
 import com.josh.smartkettlebell.model.Exercise;
+import com.josh.smartkettlebell.model.MotionData;
 import com.josh.smartkettlebell.service.MyBluetoothService;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.util.ZhangPhilGifView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Timer;
@@ -34,12 +37,14 @@ public class TrainingActivity extends AppCompatActivity {
     TextView tv_exercise_title;
     Button btn_next;
     Timer timer = new Timer();
-    long time = 0;
+    long duration = 0;
     LinkedList<Exercise> exerciseList;
     int currentExerciseIndex = 0;
     int count = 0;
     MyBluetoothService myBluetoothService;
     TrainingActivity trainingActivity = this;
+    LinkedList<MotionData> motionDataList = new LinkedList<>();
+    MyDBHelper myDBHelper = new MyDBHelper(this, MyContract.DATABASE_NAME);
     ServiceConnection serviceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -89,20 +94,41 @@ public class TrainingActivity extends AppCompatActivity {
 
         btn_next = findViewById(R.id.btn_next);
         btn_next.setOnClickListener(event->{
+            exerciseList.get(currentExerciseIndex)
+                    .setActualNumber(count);
+            exerciseList.get(currentExerciseIndex)
+                    .setMotionData(motionDataList);
+
             currentExerciseIndex++;
-            if(currentExerciseIndex >= exerciseList.size())
+            if(currentExerciseIndex >= exerciseList.size()) {
+                //寫入資料庫
+                //TODO
+                new Thread(() -> {
+                    long trainingID = myDBHelper.createTraining(duration);
+                    for(Exercise e : exerciseList){
+                        long recordID = myDBHelper.createRecord(e.getName(),trainingID,e.getNumber());
+                        for(MotionData d : e.getMotionData()){
+                            myDBHelper.insertData(d.getData(),null,recordID,d.getTimestamp());
+                        }
+                    }
+                }).start();
+                finish();
                 return;
+            }else if(currentExerciseIndex == exerciseList.size()-1){
+                btn_next.setText(R.string.Complete);
+            }
 
             setContent(exerciseList.get(currentExerciseIndex));
+
         });
 
         tv_stopwatch = findViewById(R.id.tv_stopwatch);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                time++;
+                duration++;
                 runOnUiThread(() -> {
-                    tv_stopwatch.setText(TimeFormat(time));
+                    tv_stopwatch.setText(TimeFormat(duration));
                 });
             }
         },1000,1000);
@@ -142,5 +168,9 @@ public class TrainingActivity extends AppCompatActivity {
             count++;
             tv_count.setText(count);
         }
+    }
+
+    public void receiveData(float[] data,long timeStamp){
+        motionDataList.add(new MotionData(data,timeStamp));
     }
 }

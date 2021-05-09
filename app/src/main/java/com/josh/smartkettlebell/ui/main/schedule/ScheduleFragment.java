@@ -1,65 +1,118 @@
 package com.josh.smartkettlebell.ui.main.schedule;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ScheduleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class ScheduleFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    FloatingActionButton fab;
+    ListView lv;
+    SwipeRefreshLayout srl;
+    public static ArrayList<String> ev = new ArrayList<String>();
 
     public ScheduleFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ScheduleFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ScheduleFragment newInstance(String param1, String param2) {
-        ScheduleFragment fragment = new ScheduleFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedule, container, false);
+        View view =  inflater.inflate(R.layout.fragment_schedule, container, false);
+
+
+        fab = view.findViewById(R.id.fab);
+        lv = view.findViewById(R.id.list);
+        srl = view.findViewById(R.id.swiperefresh);
+
+
+        if(hasPermission(getContext(), Manifest.permission.READ_CALENDAR)&&hasPermission(getContext(),Manifest.permission.WRITE_CALENDAR))
+        {
+            readEvent();
+        }else{
+            ActivityCompat.requestPermissions(requireActivity(),new String[]{Manifest.permission.READ_CALENDAR,Manifest.permission.WRITE_CALENDAR},101);
+        }
+
+
+
+        fab.setOnClickListener(v -> {
+
+            Intent intent = new Intent(getContext(), EventsAdderDialogActivity.class);
+            startActivity(intent);
+
+        });
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srl.setRefreshing(false);
+                getActivity().recreate();
+
+            }
+        });
+
+        return view;
+    }
+
+
+
+    private boolean hasPermission(Context context, String permission){
+        return ContextCompat.checkSelfPermission(context,permission) == PackageManager.PERMISSION_GRANTED;
+    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        if(requestCode == 101){
+            if(grantResults.length > 0 && grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                readEvent();
+            }else{
+                Toast.makeText(getContext(),"Permission denied",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    public void readEvent(){
+        ev = EventsAdderUtility.readCalendarEvent(getContext());
+        ArrayAdapter<String> aa = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_2,android.R.id.text1,ev){
+            @Override
+            public View getView(int pos, View convert, ViewGroup group) {
+                View v = super.getView(pos,convert,group);
+                TextView t1 = v.findViewById(android.R.id.text1);
+                TextView t2 = v.findViewById(android.R.id.text2);
+                if(getItem(pos).indexOf(" ") == -1){
+                    t1.setText("N/A");
+                    t2.setText("N/A");
+                    return v;
+                }
+                t1.setText(getItem(pos).substring(0,getItem(pos).indexOf(" ")));
+                t2.setText(getItem(pos).substring(getItem(pos).indexOf(" ")+1));
+                return v;
+            }
+        };
+        lv.setAdapter(aa);
     }
 }

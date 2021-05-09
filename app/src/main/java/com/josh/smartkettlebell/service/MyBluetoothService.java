@@ -161,8 +161,8 @@ public class MyBluetoothService extends Service {
             gatt.disconnect();
     }
 
-    public void startRecord(String tag){
-        callback.startRecord(tag);
+    public void startRecord(String exerciseName,long trainingID,int number){
+        callback.startRecord(exerciseName,trainingID,number);
     }
 
     public void stopRecord(){

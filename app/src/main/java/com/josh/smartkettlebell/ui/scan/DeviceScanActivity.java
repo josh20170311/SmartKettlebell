@@ -6,12 +6,9 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -20,8 +17,6 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -30,9 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.josh.smartkettlebell.R;
-import com.josh.smartkettlebell.ui.device.DeviceInfoActivity;
+import com.josh.smartkettlebell.ui.device.DeviceBrowserActivity;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class DeviceScanActivity extends AppCompatActivity {
@@ -185,9 +179,9 @@ public class DeviceScanActivity extends AppCompatActivity {
 //        }
     }
     public void connect(String address, String name){
-        Intent intent = new Intent(this,DeviceInfoActivity.class);
-        intent.putExtra(DeviceInfoActivity.EXTRA_DEVICE_ADDRESS,address);
-        intent.putExtra(DeviceInfoActivity.EXTRA_DEVICE_NAME,name);
+        Intent intent = new Intent(this, DeviceBrowserActivity.class);
+        intent.putExtra(DeviceBrowserActivity.EXTRA_DEVICE_ADDRESS,address);
+        intent.putExtra(DeviceBrowserActivity.EXTRA_DEVICE_NAME,name);
         startActivity(intent);
     }
 

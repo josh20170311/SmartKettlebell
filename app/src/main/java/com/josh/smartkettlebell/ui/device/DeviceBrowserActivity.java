@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class DeviceInfoActivity extends AppCompatActivity implements View.OnClickListener {
+public class DeviceBrowserActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private static final String TAG = "myTag : DeviceInfoActivity : ";
@@ -48,7 +47,8 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     private LineChart chart_acc, chart_facc, chart_ahrs, chart_gyr, chart_mag;
     private TextView tv_name, tv_address, tv_rssi, tv_noti, tv_motionData, tv_status;
     private Button btn_recordData;
-    private EditText et_tag;
+    private EditText et_name;
+    private EditText et_number;
     private MyBluetoothService mBluetoothService;
     private String deviceAddress;
     private String deviceName;
@@ -56,7 +56,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_info);
+        setContentView(R.layout.activity_device_browser);
 
         deviceAddress = getIntent().getStringExtra(EXTRA_DEVICE_ADDRESS);
         Log.d(TAG, "Device Info : onCreate: "+deviceAddress);
@@ -98,7 +98,8 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         btn_recordData = findViewById(R.id.btn_recordData);
         btn_recordData.setOnClickListener(this);
 
-        et_tag = findViewById(R.id.et_tag);
+        et_name = findViewById(R.id.et_tag);
+        et_number = findViewById(R.id.et_number);
 
         filter.addAction(MyBluetoothService.ACTION_CONNECTED);
         filter.addAction(MyBluetoothService.ACTION_DISCONNECTED);
@@ -405,7 +406,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 btn_recordData.setText(R.string.recording);
                 btn_recordData.setBackgroundColor(Color.RED);
                 isRecording = true;
-                mBluetoothService.startRecord(et_tag.getText().toString());
+                mBluetoothService.startRecord(et_name.getText().toString(),0,0);
             }
         }
     }
