@@ -40,7 +40,6 @@ public class MyContract {
 
     public static final class RecordEntry implements BaseColumns {
         public static final String TABLE_NAME = "Record";
-
         public static final String COLUMN_TRAINING_ID = "TrainingID";
         public static final String COLUMN_EXERCISE_NAME = "ExerciseName";
         public static final String COLUMN_TIMESTAMP = "Timestamp";
@@ -49,7 +48,6 @@ public class MyContract {
 
     public static final class TrainingEntry implements BaseColumns{
         public static final String TABLE_NAME = "Training";
-
         public static final String COLUMN_DATE = "Date";
         public static final String COLUMN_DURATION = "Duration";
     }

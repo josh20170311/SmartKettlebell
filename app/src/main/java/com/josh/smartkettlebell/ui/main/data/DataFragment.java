@@ -1,5 +1,6 @@
 package com.josh.smartkettlebell.ui.main.data;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.db.MyContract;
+import com.josh.smartkettlebell.db.MyDBHelper;
 
 
 public class DataFragment extends Fragment {
@@ -33,7 +36,20 @@ public class DataFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_data, container, false);
 
-        final String movement[][] = {{"深蹲","15"}, {"硬舉","20"},{"擺盪","0"}};//movement and times in array
+//        final String[][] movement = {{"深蹲","15"}, {"硬舉","20"},{"擺盪","0"}};//movement and times in array
+        final String[][] movement;
+        Cursor cursor_record = new MyDBHelper(getContext(), MyContract.DATABASE_NAME).getRecords();
+        len = cursor_record.getCount();
+        movement = new String[len][2];
+        while(cursor_record.moveToNext()){
+            movement[cursor_record.getPosition()][0]
+                    = cursor_record.getString(cursor_record.getColumnIndex(MyContract.RecordEntry.COLUMN_EXERCISE_NAME));
+            movement[cursor_record.getPosition()][1]
+                    = cursor_record.getString(cursor_record.getColumnIndex(MyContract.RecordEntry.COLUMN_NUMBER));
+        }
+
+
+
         LinearLayout l1 = view.findViewById(R.id.linear1);
         LinearLayout l2 = view.findViewById(R.id.linear2);//l1 in left side and l2 in right side
 

@@ -1,7 +1,6 @@
 package com.josh.smartkettlebell.ui.main.training.trainingplan;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.model.Exercise;
-import com.josh.smartkettlebell.service.MyBluetoothService;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.addexercise.AddExerciseActivity;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
@@ -38,7 +36,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
     public static int RESULT_CODE_ADD_EXERCISE = 301;
     public static int REQUEST_CODE_EDIT_EXERCISE = 400;
     public static int RESULT_CODE_EDIT_EXERCISE = 401;
-    Button btn_start;
+    Button btn_start,btn_start_without_device;
     FloatingActionButton fab;
     RecyclerView rv;
     ItemTouchHelper touchHelper;
@@ -51,7 +49,8 @@ public class TrainingPlanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_training_plan);
 
         btn_start = findViewById(R.id.btn_start_training);
-        fab = findViewById(R.id.fab_add_action);
+        btn_start_without_device = findViewById(R.id.btn_start_training_without_device);
+        fab = findViewById(R.id.fab_add_excercise);
         rv = findViewById(R.id.rv_action_plan_list);
 
 
@@ -106,6 +105,12 @@ public class TrainingPlanActivity extends AppCompatActivity {
                         }).show();
                 return;
             }
+            Intent intent = new Intent(this, TrainingActivity.class);
+            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
+            startActivity(intent);
+        });
+
+        btn_start_without_device.setOnClickListener(e -> {
             Intent intent = new Intent(this, TrainingActivity.class);
             intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
             startActivity(intent);

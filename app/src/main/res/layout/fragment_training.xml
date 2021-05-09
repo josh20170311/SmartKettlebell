@@ -9,7 +9,7 @@
     <!-- : Update blank fragment layout -->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_action"
+        android:id="@+id/fab_add_excercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"

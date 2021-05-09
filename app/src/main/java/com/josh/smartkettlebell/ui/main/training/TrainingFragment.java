@@ -29,7 +29,7 @@ public class TrainingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_training, container, false);
-        FloatingActionButton fab = view.findViewById(R.id.fab_add_action);
+        FloatingActionButton fab = view.findViewById(R.id.fab_add_excercise);
         view.findViewById(R.id.btn_test).setOnClickListener(e -> {
             startActivity(new Intent(getContext(), TrainingActivity.class));
         });
