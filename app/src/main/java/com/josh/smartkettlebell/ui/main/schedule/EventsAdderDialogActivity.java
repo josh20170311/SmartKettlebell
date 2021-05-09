@@ -30,7 +30,7 @@ public class EventsAdderDialogActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_INSERT);
                 intent.setData(CalendarContract.Events.CONTENT_URI);
                 intent.putExtra(CalendarContract.Events.TITLE, spnExcs.getSelectedItem().toString() + "  " + spnSets.getSelectedItem().toString());
-                intent.putExtra(CalendarContract.Events.DESCRIPTION, "");
+                intent.putExtra(CalendarContract.Events.DESCRIPTION, "#SmartKettleBell");
 
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);

@@ -62,11 +62,12 @@ public class EventsAdderUtility {
             //descriptions.add(cursor.getString(2));
 
             String title = cursor.getString(1);
+            String description = cursor.getString(2);
             String start_time = getDate(cursor.getLong(3));
             String end_time = getDate(cursor.getLong(4));
-
-            ev.add(String.format("%s, %s - %s",title,start_time,end_time));
-
+            if(description.contains("#SmartKettleBell")) {
+                ev.add(String.format("%s, %s - %s", title, start_time, end_time));
+            }
 
             /*String s = "";//測試用
             for(int j = 1 ; j<cursor.getColumnCount();j++){
