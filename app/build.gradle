@@ -53,12 +53,17 @@ dependencies {
 
 
 
+
     //DJL
     implementation "ai.djl:api:0.10.0"
     implementation "ai.djl.android:core:0.10.0"
     implementation 'androidx.preference:preference:1.1.1'
     runtimeOnly "ai.djl.pytorch:pytorch-engine:0.10.0"
     runtimeOnly "ai.djl.android:pytorch-native:0.10.0"
+
+    //GIF
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+
 
     //unit test
     testImplementation 'junit:junit:4.12'
