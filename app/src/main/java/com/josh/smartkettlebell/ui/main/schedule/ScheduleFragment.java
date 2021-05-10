@@ -73,8 +73,7 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onRefresh() {
                 srl.setRefreshing(false);
-                getActivity().recreate();
-
+                readEvent();
             }
         });
 
