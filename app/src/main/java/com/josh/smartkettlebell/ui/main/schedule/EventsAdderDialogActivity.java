@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.josh.smartkettlebell.R;
 
+import static com.josh.smartkettlebell.ui.main.schedule.EventsAdderUtility.MAGIC_TAG;
+
 public class EventsAdderDialogActivity extends Activity {
     Spinner spnExcs;
     Spinner spnSets;
@@ -30,7 +32,7 @@ public class EventsAdderDialogActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_INSERT);
                 intent.setData(CalendarContract.Events.CONTENT_URI);
                 intent.putExtra(CalendarContract.Events.TITLE, spnExcs.getSelectedItem().toString() + "  " + spnSets.getSelectedItem().toString());
-                intent.putExtra(CalendarContract.Events.DESCRIPTION, "#SmartKettleBell");
+                intent.putExtra(CalendarContract.Events.DESCRIPTION, MAGIC_TAG);
 
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);

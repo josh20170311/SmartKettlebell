@@ -20,6 +20,10 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public Cursor getTrainings(){
+        return getReadableDatabase().rawQuery("SELECT * FROM " + TrainingEntry.TABLE_NAME, new String[]{});
+    }
+
     public Cursor getRecords() {
         return getReadableDatabase().rawQuery("SELECT * FROM " + RecordEntry.TABLE_NAME, new String[]{});
     }

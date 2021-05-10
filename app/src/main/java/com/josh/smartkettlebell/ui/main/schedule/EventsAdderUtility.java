@@ -18,18 +18,19 @@ public class EventsAdderUtility {
     public static ArrayList<String> endDates = new ArrayList<String>();
     public static ArrayList<String> descriptions = new ArrayList<String>();
     public static ArrayList<String> ev = new ArrayList<String>();
+    public static String MAGIC_TAG = "#SmartKettleBell";
 
     static String TAG  = "myTag";
 
     public static ArrayList<String> readCalendarEvent(Context context) {
         Log.d(TAG, "readCalendarEvent: ");
         Calendar startTime = Calendar.getInstance();
-
         startTime.set(Calendar.HOUR_OF_DAY,0);
         startTime.set(Calendar.MINUTE,0);
         startTime.set(Calendar.SECOND, 0);
 
         Calendar endTime= Calendar.getInstance();
+        endTime.setTime(startTime.getTime());
         endTime.add(Calendar.DATE, 1);
 
         String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( "
@@ -65,7 +66,10 @@ public class EventsAdderUtility {
             String description = cursor.getString(2);
             String start_time = getDate(cursor.getLong(3));
             String end_time = getDate(cursor.getLong(4));
-            if(description.contains("#SmartKettleBell")) {
+            if(description == null)
+                continue;
+            Log.d(TAG, "readCalendarEvent: "+description);
+            if(description.contains(MAGIC_TAG)) {
                 ev.add(String.format("%s, %s - %s", title, start_time, end_time));
             }
 
