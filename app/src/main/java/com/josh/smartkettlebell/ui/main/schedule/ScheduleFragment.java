@@ -107,7 +107,9 @@ public class ScheduleFragment extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
-        readEvent();
+        super.onResume();if(hasPermission(getContext(), Manifest.permission.READ_CALENDAR)&&hasPermission(getContext(),Manifest.permission.WRITE_CALENDAR))
+        {
+            readEvent();
+        }
     }
 }

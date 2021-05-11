@@ -24,7 +24,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         this.rootKey = rootKey;
     }
     public void update(){
-//        setPreferencesFromResource(R.xml.root_preferences, rootKey);
+        setPreferencesFromResource(R.xml.root_preferences, rootKey);
     }
 
 }

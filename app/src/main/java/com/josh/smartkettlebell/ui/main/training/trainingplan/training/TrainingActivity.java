@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.josh.smartkettlebell.db.MyDBHelper;
 import com.josh.smartkettlebell.model.Exercise;
 import com.josh.smartkettlebell.model.MotionData;
 import com.josh.smartkettlebell.service.MyBluetoothService;
+import com.josh.smartkettlebell.ui.main.challenge.ChallengeFragment;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.util.ZhangPhilGifView;
 
@@ -33,6 +35,7 @@ import java.util.TimerTask;
 
 public class TrainingActivity extends AppCompatActivity {
     public static final String EXTRA_LIST = "EXTRA_LIST";
+    public static final String EXTRA_REQUEST_CODE = "EXTRA_REQUEST_CODE";
     ZhangPhilGifView gv_demo;
     TextView tv_stopwatch;
     TextView tv_count;
@@ -118,6 +121,10 @@ public class TrainingActivity extends AppCompatActivity {
                 //寫入資料庫
                 //TODO
                 new Thread(() -> {
+                    getSharedPreferences(ChallengeFragment.PREFERENCE_NAME_CHALLENGE,MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(ChallengeFragment.PREFERENCE_KEY_DONE,true)
+                    .apply();
                     long trainingID = myDBHelper.createTraining(duration);
                     for(Exercise e : exerciseList){
                         long recordID = myDBHelper.createRecord(e.getName(),trainingID,e.getNumber());
@@ -127,6 +134,8 @@ public class TrainingActivity extends AppCompatActivity {
                         }
                     }
                 }).start();
+                if(getIntent().getIntExtra(TrainingActivity.EXTRA_REQUEST_CODE,0) == ChallengeFragment.REQUEST_CODE_CHALLENGE)
+                    setResult(ChallengeFragment.RESULT_CODE_CHALLENGE);
                 finish();
                 return;
             }else if(currentExerciseIndex == exerciseList.size()-1){

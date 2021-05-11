@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -82,10 +83,6 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(receiver,filter);
         bindService(new Intent(this, MyBluetoothService.class),connection,BIND_AUTO_CREATE);
     }
-
-
-
-
     private void setNavigation(){
         navigationView.setNavigationItemSelectedListener(item -> {
             switch(item.getItemId()){
@@ -159,6 +156,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onRequestPermissionsResult: permission denied");
                 Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == ChallengeFragment.RESULT_CODE_CHALLENGE){
+            ((ChallengeFragment)challengeFragment).disableGotoBtn();
         }
     }
 }

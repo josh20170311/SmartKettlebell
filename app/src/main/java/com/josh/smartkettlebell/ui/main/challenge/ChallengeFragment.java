@@ -1,5 +1,6 @@
 package com.josh.smartkettlebell.ui.main.challenge;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,9 +12,12 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.josh.smartkettlebell.R;
+import com.josh.smartkettlebell.model.Exercise;
+import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
 
@@ -23,12 +27,15 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class ChallengeFragment extends Fragment {
-    TextView  timeText, challengeText, challengeText2, challengeTimes, challengeTimes2, Set;
-    GifImageView gif1, gif2;
-    Button gotoChallengeBtn;
     public static String PREFERENCE_NAME_CHALLENGE = "CHALLENGE";
     public static String PREFERENCE_KEY_DATE = "date";
     public static String PREFERENCE_KEY_CHALLENGE = "challenge";
+    public static String PREFERENCE_KEY_DONE = "done";
+    public static int REQUEST_CODE_CHALLENGE = 1000;
+    public static int RESULT_CODE_CHALLENGE = 1001;
+    TextView  timeText, challengeText, challengeText2, challengeTimes, challengeTimes2, Set;
+    GifImageView gif1, gif2;
+    Button gotoChallengeBtn;
     SharedPreferences challengePref;
 
 
@@ -52,7 +59,6 @@ public class ChallengeFragment extends Fragment {
         gif2 = view.findViewById(R.id.gif2);
         gotoChallengeBtn = view.findViewById(R.id.gotochallengebtn);
 
-
         //讀取當天日期
         timeText = view.findViewById(R.id.txt2);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault());
@@ -65,14 +71,11 @@ public class ChallengeFragment extends Fragment {
         timeText.setText(today);
         //是否已換日
         if (!date.equals(today)) {
-            //更新存入的日期
+            //更新Preference
             challengePref.edit()
                     .putString(PREFERENCE_KEY_DATE, today)
-                    .apply();
-
-            //儲存今日的挑戰
-            challengePref.edit()
                     .putString(PREFERENCE_KEY_CHALLENGE, changeChallenge())
+                    .putBoolean(PREFERENCE_KEY_DONE,false)
                     .apply();
         }
 
@@ -81,32 +84,56 @@ public class ChallengeFragment extends Fragment {
         //顯示今日的挑戰
         challengeText.setText(dailyChallenges[0]);
         challengeText2.setText(dailyChallenges[2]);
-        challengeTimes.setText(dailyChallenges[1]);
-        challengeTimes2.setText(dailyChallenges[3]);
-        Set.setText(dailyChallenges[4]);
+        challengeTimes.setText(String.format("%s下", dailyChallenges[1]));
+        challengeTimes2.setText(String.format("%s下", dailyChallenges[3]));
+        Set.setText(String.format("各%s組", dailyChallenges[4]));
 
         //根據今天的挑戰抓GIF
         setGif(gif1,dailyChallenges[0]);
         setGif(gif2,dailyChallenges[2]);
+
+        if(challengePref.getBoolean(PREFERENCE_KEY_DONE,false)){
+            disableGotoBtn();
+            return view;
+        }
+
+        gotoChallengeBtn.setOnClickListener(e -> {
+            String[] challenges = challengePref.getString(PREFERENCE_KEY_CHALLENGE,null).split(",");
+            LinkedList<Exercise> exerciseList = new LinkedList<>();
+
+            for (int i = 0; i < Integer.parseInt(challenges[4]); i++) {
+                Exercise exercise1 = new Exercise(challenges[0],Integer.parseInt(challenges[1]));
+                Exercise exercise2 = new Exercise(challenges[2],Integer.parseInt(challenges[3]));
+                exerciseList.add(exercise1);
+                exerciseList.add(exercise2);
+            }
+
+            Intent intent = new Intent(getContext(), TrainingActivity.class);
+            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
+            intent.putExtra(TrainingActivity.EXTRA_REQUEST_CODE, REQUEST_CODE_CHALLENGE);
+            startActivityForResult(intent, REQUEST_CODE_CHALLENGE);
+
+        });
+
 
         return view;
     }
 
     void setGif(GifImageView gif,String dailyChallenge){
         switch (dailyChallenge) {
-            case "壺鈴擺盪":
+            case "swing":
                 gif.setImageResource(R.drawable.kettlebell_swings);
                 break;
-            case "壺鈴硬舉":
+            case "deadlift":
                 gif.setImageResource(R.drawable.kettlebell_deadlift);
                 break;
-            case "壺鈴推舉":
+            case "push":
                 gif.setImageResource(R.drawable.kettlebell_press);
                 break;
-            case "壺鈴單手划船":
+            case "row":
                 gif.setImageResource(R.drawable.kettlebell_bent_over_row);
                 break;
-            case "壺鈴深蹲":
+            case "squat":
                 gif.setImageResource(R.drawable.kettlebell_squat);
                 break;
         }
@@ -129,19 +156,19 @@ public class ChallengeFragment extends Fragment {
 
             switch (number) {
                 case 1:
-                    exerciseName = "壺鈴擺盪";
+                    exerciseName = "swing";
                     break;
                 case 2:
-                    exerciseName = "壺鈴硬舉";
+                    exerciseName = "deadlift";
                     break;
                 case 3:
-                    exerciseName = "壺鈴推舉";
+                    exerciseName = "push";
                     break;
                 case 4:
-                    exerciseName = "壺鈴單手划船";
+                    exerciseName = "row";
                     break;
                 case 5:
-                    exerciseName = "壺鈴深蹲";
+                    exerciseName = "squat";
                     break;
             }
             exerciseName += ",";
@@ -149,16 +176,16 @@ public class ChallengeFragment extends Fragment {
             int rand = random.nextInt(4) + 1;
             switch (rand) {
                 case 1:
-                    times = "5下";
+                    times = "5";
                     break;
                 case 2:
-                    times = "10下";
+                    times = "10";
                     break;
                 case 3:
-                    times = "15下";
+                    times = "15";
                     break;
                 case 4:
-                    times = "20下";
+                    times = "20";
                     break;
             }
             times += ",";
@@ -166,7 +193,12 @@ public class ChallengeFragment extends Fragment {
         }
 
         int setTimes = random.nextInt(3) + 1;
-        challengeString.append("共").append(setTimes).append("組");
+        challengeString.append(setTimes);
         return challengeString.toString();
+    }
+
+    public void disableGotoBtn(){
+        gotoChallengeBtn.setText("今日已完成挑戰");
+        gotoChallengeBtn.setEnabled(false);
     }
 }
