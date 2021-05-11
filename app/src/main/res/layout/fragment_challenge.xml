@@ -65,7 +65,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/chanllengetext"
+                android:id="@+id/challengetext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="今天的挑戰是"
@@ -74,7 +74,7 @@
                 android:textSize="25dp" />
 
             <TextView
-                android:id="@+id/chanllengetimes"
+                android:id="@+id/challengetimes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -106,7 +106,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/chanllengetext2"
+                android:id="@+id/challengetext2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="今天的挑戰是"
@@ -115,7 +115,7 @@
                 android:textSize="25dp" />
 
             <TextView
-                android:id="@+id/chanllengetimes2"
+                android:id="@+id/challengetimes2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -135,7 +135,7 @@
         android:textSize="25dp" />
 
     <Button
-        android:id="@+id/gotochanllengebtn"
+        android:id="@+id/gotochallengebtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"

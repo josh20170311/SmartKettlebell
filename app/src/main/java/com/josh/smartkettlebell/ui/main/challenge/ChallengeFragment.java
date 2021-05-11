@@ -27,9 +27,9 @@ public class ChallengeFragment extends Fragment {
     GifImageView gif1, gif2;
     Button gotoChallengeBtn;
     public static String PREFERENCE_NAME_CHALLENGE = "CHALLENGE";
-    public static String PREFERENCE_NAME_DATE = "DATE";
     public static String PREFERENCE_KEY_DATE = "date";
     public static String PREFERENCE_KEY_CHALLENGE = "challenge";
+    SharedPreferences challengePref;
 
 
     @Override
@@ -48,14 +48,14 @@ public class ChallengeFragment extends Fragment {
 
 
         textView = view.findViewById(R.id.txt);
-        challengeText = view.findViewById(R.id.chanllengetext);
-        challengeText2 = view.findViewById(R.id.chanllengetext2);
-        challengeTimes = view.findViewById(R.id.chanllengetimes);
-        challengeTimes2 = view.findViewById(R.id.chanllengetimes2);
+        challengeText = view.findViewById(R.id.challengetext);
+        challengeText2 = view.findViewById(R.id.challengetext2);
+        challengeTimes = view.findViewById(R.id.challengetimes);
+        challengeTimes2 = view.findViewById(R.id.challengetimes2);
         Set = view.findViewById(R.id.set);
         gif1 = view.findViewById(R.id.gif1);
         gif2 = view.findViewById(R.id.gif2);
-        gotoChallengeBtn = view.findViewById(R.id.gotochanllengebtn);
+        gotoChallengeBtn = view.findViewById(R.id.gotochallengebtn);
 
 
         //讀取當天日期
@@ -64,27 +64,26 @@ public class ChallengeFragment extends Fragment {
         Date curDate = new Date(System.currentTimeMillis()); // 獲取當前時間
         String today = formatter.format(curDate);
 
-        //建立日期的SharedPreferences
-        SharedPreferences timePref = getActivity().getSharedPreferences(PREFERENCE_NAME_DATE, MODE_PRIVATE);
-        String date = getActivity().getSharedPreferences(PREFERENCE_KEY_DATE, MODE_PRIVATE)//讀取儲存的日期
-                .getString(PREFERENCE_KEY_DATE, "");
+        //建立SharedPreferences
+        challengePref = getActivity().getSharedPreferences(PREFERENCE_NAME_CHALLENGE, MODE_PRIVATE);
 
-//        textView.setText("date="+date);
+        String date = challengePref.getString(PREFERENCE_KEY_DATE, "");//讀取儲存的日期
+
+
         timeText.setText(today);
 
 
         if (!date.equals(today)) { //是否已換日
             //更新存入的日期
-            timePref.edit()
-                    .putString("date", today)
+            challengePref.edit()
+                    .putString(PREFERENCE_KEY_DATE, today)
                     .apply();
 
 
             String dailyChallenge = changeChallenge();//呼叫changeChallenge
             String[] dailyChallenges = dailyChallenge.split(",");
             //儲存今日的挑戰
-            SharedPreferences pref = getActivity().getSharedPreferences(PREFERENCE_NAME_CHALLENGE, MODE_PRIVATE);
-            pref.edit()
+            challengePref.edit()
                     .putString(PREFERENCE_KEY_CHALLENGE, dailyChallenge)
                     .apply();
             //顯示今日的挑戰
@@ -132,8 +131,7 @@ public class ChallengeFragment extends Fragment {
 
 
         } else {
-            String dailyChallenge = getActivity().getSharedPreferences(PREFERENCE_KEY_CHALLENGE, MODE_PRIVATE)
-                    .getString(PREFERENCE_KEY_CHALLENGE, "");
+            String dailyChallenge = challengePref.getString(PREFERENCE_KEY_CHALLENGE, "");
             String[] dailyChallenges = dailyChallenge.split(",");
             //顯示今日的挑戰
             challengeText.setText(dailyChallenges[0]);
