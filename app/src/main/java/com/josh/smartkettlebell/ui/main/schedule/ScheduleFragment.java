@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +32,8 @@ public class ScheduleFragment extends Fragment {
     ListView lv_event;
     SwipeRefreshLayout swipeRefreshLayout;
     public static ArrayList<String> eventList = new ArrayList<>();
-
-    public ScheduleFragment() {
-
-    }
+    public static int PERMISSION_REQUEST_CODE_CALENDER = 10001;
+    String TAG = "myTag";
 
 
     @Override
@@ -58,7 +57,10 @@ public class ScheduleFragment extends Fragment {
         {
             readEvent();
         }else{
-            ActivityCompat.requestPermissions(requireActivity(),new String[]{Manifest.permission.READ_CALENDAR,Manifest.permission.WRITE_CALENDAR},101);
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_CALENDAR,
+                            Manifest.permission.WRITE_CALENDAR},
+                    PERMISSION_REQUEST_CODE_CALENDER);
         }
 
 
@@ -81,15 +83,6 @@ public class ScheduleFragment extends Fragment {
 
     private boolean hasPermission(Context context, String permission){
         return ContextCompat.checkSelfPermission(context,permission) == PackageManager.PERMISSION_GRANTED;
-    }
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        if(requestCode == 101){
-            if(grantResults.length > 0 && grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
-                readEvent();
-            }else{
-                Toast.makeText(getContext(),"Permission denied",Toast.LENGTH_SHORT).show();
-            }
-        }
     }
     public void readEvent(){
         eventList = EventsAdderUtility.readCalendarEvent(getContext());

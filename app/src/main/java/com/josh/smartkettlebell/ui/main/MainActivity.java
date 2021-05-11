@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -29,6 +32,8 @@ import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.TrainingFragment;
 
 import java.util.Objects;
+
+import static com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment.PERMISSION_REQUEST_CODE_CALENDER;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -140,5 +145,20 @@ public class MainActivity extends AppCompatActivity {
                 .putString(SettingsFragment.KEY_DEVICE_STATE,"Disconnected")
                 .apply();
 
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        Log.d(TAG, "onRequestPermissionsResult: result");
+        if(requestCode == PERMISSION_REQUEST_CODE_CALENDER){
+            Log.d(TAG, "onRequestPermissionsResult: requestCode");
+            if(grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){{
+                Log.d(TAG, "onRequestPermissionsResult: readEvent");
+                ((ScheduleFragment)scheduleFragment).readEvent();
+            }
+            }else{
+                Log.d(TAG, "onRequestPermissionsResult: permission denied");
+                Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
