@@ -104,4 +104,10 @@ public class ScheduleFragment extends Fragment {
         };
         lv_event.setAdapter(aa);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        readEvent();
+    }
 }
