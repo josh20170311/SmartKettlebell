@@ -36,15 +36,19 @@ public class MyBluetoothService extends Service {
     private Boolean isCommandQueueLocked = false;
     private float[] currentData;
 
+
+    private TrainingActivity trainingActivity;
+
     public TrainingActivity getTrainingActivity() {
         return trainingActivity;
     }
 
     public void setTrainingActivity(TrainingActivity trainingActivity) {
         this.trainingActivity = trainingActivity;
+        callback.setTrainingActivity(trainingActivity);
+        Log.d(TAG, "setTrainingActivity: "+trainingActivity);
     }
 
-    private TrainingActivity trainingActivity;
 
     public float[] getCurrentData() {
         return currentData;

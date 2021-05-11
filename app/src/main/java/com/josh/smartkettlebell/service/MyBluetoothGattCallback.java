@@ -8,10 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 
 
-import androidx.preference.PreferenceManager;
-
 import com.josh.smartkettlebell.db.MyDBHelper;
-import com.josh.smartkettlebell.interfaces.ICounter;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
 import com.josh.smartkettlebell.util.AHRS;
 import com.josh.smartkettlebell.util.Decoder;
@@ -33,10 +30,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
 
     public MyBluetoothGattCallback(MyBluetoothService service, MyDBHelper dbHelper){
         this.service = service;
-//        Log.d(TAG, "MyBluetoothGattCallback: "+service.toString());
-//        Log.d(TAG, "MyBluetoothGattCallback: "+this.toString());
         this.dbHelper = dbHelper;
-        this.trainingActivity = service.getTrainingActivity();
     }
 
 
@@ -52,6 +46,7 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
         else if(newState == BluetoothGatt.STATE_DISCONNECTED){
             Log.d(TAG, "onConnectionStateChange: device disconnected"+this+service);
             service.sendBroadcast(new Intent(ACTION_DISCONNECTED));
+            trainingActivity.setDeviceReady(false);
         }
     }
 
@@ -95,12 +90,12 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
         long timeStamp = new Date().getTime();
         if(c.getUuid().equals(UUID_MOTION_DATA)) {
             byte[] value = c.getValue();
-//            Log.d(TAG, "onCharacteristicChanged: " + Arrays.toString(value));
             float[] data = Decoder.decodeMotionData(value);
             assert data != null;
             if(trainingActivity != null){
+                trainingActivity.setDeviceReady(true);
                 trainingActivity.count(data);
-                trainingActivity.receiveData(data,new Date().getTime());
+                trainingActivity.receiveData(data,timeStamp);
             }
 
             float[] facc_data = new float[3];
@@ -142,5 +137,8 @@ public class MyBluetoothGattCallback extends BluetoothGattCallback {
         if(is_recording){
             is_recording = false;
         }
+    }
+    public void setTrainingActivity(TrainingActivity trainingActivity){
+        this.trainingActivity = trainingActivity;
     }
 }

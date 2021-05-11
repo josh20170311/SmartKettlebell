@@ -100,9 +100,17 @@ public class TrainingPlanActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle("Please Set a Device")
                         .setPositiveButton("OK", (dialog, which) -> {
-                            Intent intent = new Intent(this, DeviceScanActivity.class);
-                            startActivity(intent);
-                        }).show();
+                                Intent intent = new Intent(this, DeviceScanActivity.class);
+                                startActivity(intent);
+                            })
+                        .show();
+                return;
+            }
+            if(exerciseList.size() == 0){
+                new AlertDialog.Builder(this)
+                        .setTitle("Please Set at lest an Exercise")
+                        .setPositiveButton("OK",(dialog,which)->{})
+                        .show();
                 return;
             }
             Intent intent = new Intent(this, TrainingActivity.class);
@@ -111,6 +119,13 @@ public class TrainingPlanActivity extends AppCompatActivity {
         });
 
         btn_start_without_device.setOnClickListener(e -> {
+            if(exerciseList.size() == 0){
+                new AlertDialog.Builder(this)
+                        .setTitle("Please Set at lest an Exercise")
+                        .setPositiveButton("OK",(dialog,which)->{})
+                        .show();
+                return;
+            }
             Intent intent = new Intent(this, TrainingActivity.class);
             intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
             startActivity(intent);

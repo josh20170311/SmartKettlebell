@@ -13,7 +13,7 @@ import static com.josh.smartkettlebell.db.MyContract.*;
 
 public class MyDBHelper extends SQLiteOpenHelper {
 
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 3;
 
     public MyDBHelper(Context context, String dbName) {
         super(context, dbName, null, DB_VERSION);
@@ -43,10 +43,11 @@ public class MyDBHelper extends SQLiteOpenHelper {
             values.put(columns[i], data[i]);
         }
 
-        for (int i = columns.length - 3; i < columns.length; i++) {
-            values.put(columns[i], facc_data[i - columns.length + 3]);
+        if (facc_data != null){
+            for (int i = columns.length - 3; i < columns.length; i++) {
+                values.put(columns[i], facc_data[i - columns.length + 3]);
+            }
         }
-
         getWritableDatabase().insert(DataEntry.TABLE_NAME, null, values);
     }
 
@@ -96,9 +97,9 @@ public class MyDBHelper extends SQLiteOpenHelper {
                         "%s REAL NOT NULL ," + // MAG X
                         "%s REAL NOT NULL ," +
                         "%s REAL NOT NULL ," +
-                        "%s REAL NOT NULL ," + // filtered ACC X
-                        "%s REAL NOT NULL ," +
-                        "%s REAL NOT NULL " +
+                        "%s REAL  ," + // filtered ACC X
+                        "%s REAL  ," +
+                        "%s REAL  " +
                         ");",
                 DataEntry.TABLE_NAME,
                 DataEntry._ID,
