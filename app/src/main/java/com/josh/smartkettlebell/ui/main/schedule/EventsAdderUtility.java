@@ -4,11 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class EventsAdderUtility {
@@ -17,13 +21,12 @@ public class EventsAdderUtility {
     public static ArrayList<String> startDates = new ArrayList<String>();
     public static ArrayList<String> endDates = new ArrayList<String>();
     public static ArrayList<String> descriptions = new ArrayList<String>();
-    public static ArrayList<String> ev = new ArrayList<String>();
+    public static ArrayList<String> eventList = new ArrayList<String>();
     public static String MAGIC_TAG = "#SmartKettleBell";
 
     static String TAG  = "myTag";
 
     public static ArrayList<String> readCalendarEvent(Context context) {
-        Log.d(TAG, "readCalendarEvent: ");
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY,0);
         startTime.set(Calendar.MINUTE,0);
@@ -34,56 +37,46 @@ public class EventsAdderUtility {
         endTime.add(Calendar.DATE, 1);
 
         String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( "
-                + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ) AND ( deleted != 1 ))";
-
-
-
+                + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ) AND ( " +
+                CalendarContract.Events.DELETED +" != 1 ))";
 
         Cursor cursor = context.getContentResolver()
-                .query(
-                        Uri.parse("content://com.android.calendar/events"),
-                        new String[] { "calendar_id", "title", "description",
-                                "dtstart", "dtend", "eventLocation" }, selection,
+                .query(Uri.parse("content://com.android.calendar/events"),
+                        new String[] { CalendarContract.Events.CALENDAR_ID,
+                                CalendarContract.Events.TITLE,
+                                CalendarContract.Events.DESCRIPTION,
+                                CalendarContract.Events.DTSTART,
+                                CalendarContract.Events.DTEND,
+                                CalendarContract.Events.EVENT_LOCATION}, selection,
                         null, null);
-        cursor.moveToFirst();
+
         // fetching calendars name
-        String CNames[] = new String[cursor.getCount()];
+        String[] CNames = new String[cursor.getCount()];
 
         // fetching calendars id
         nameOfEvent.clear();
         startDates.clear();
         endDates.clear();
         descriptions.clear();
-        ev.clear();
-        for (int i = 0; i < CNames.length; i++) {
+        eventList.clear();
 
-            //nameOfEvent.add(cursor.getString(1));
-            //startDates.add(getDate(Long.parseLong(cursor.getString(3))));
-            //endDates.add(getDate(Long.parseLong(cursor.getString(4))));
-            //descriptions.add(cursor.getString(2));
+        while (cursor.moveToNext()){
 
-            String title = cursor.getString(1);
-            String description = cursor.getString(2);
-            String start_time = getDate(cursor.getLong(3));
-            String end_time = getDate(cursor.getLong(4));
-            if(description == null)
+            String title = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.TITLE));
+            String description = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DESCRIPTION));
+            String start_time = getDate(cursor.getLong(cursor.getColumnIndex(CalendarContract.Events.DTSTART)));
+            String end_time = getDate(cursor.getLong(cursor.getColumnIndex(CalendarContract.Events.DTEND)));
+
+            if (description == null)
                 continue;
-            Log.d(TAG, "readCalendarEvent: "+description);
-            if(description.contains(MAGIC_TAG)) {
-                ev.add(String.format("%s, %s - %s", title, start_time, end_time));
+
+            if(description.equals(MAGIC_TAG)) {
+                eventList.add(String.format("%s, %s - %s", title, start_time, end_time));
             }
 
-            /*String s = "";//測試用
-            for(int j = 1 ; j<cursor.getColumnCount();j++){
-                s += cursor.getString(j);
-            }
-            ev.add(s);*/
-
-            CNames[i] = cursor.getString(1);
-            cursor.moveToNext();
-
+            CNames[cursor.getPosition()] = cursor.getString(1);
         }
-        return ev;
+        return eventList;
     }
 
     public static String getDate(long milliSeconds) {
