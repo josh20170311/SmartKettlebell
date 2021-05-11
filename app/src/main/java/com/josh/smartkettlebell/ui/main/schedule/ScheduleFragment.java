@@ -28,9 +28,9 @@ public class ScheduleFragment extends Fragment {
 
 
     FloatingActionButton fab;
-    ListView lv;
-    SwipeRefreshLayout srl;
-    public static ArrayList<String> ev = new ArrayList<String>();
+    ListView lv_event;
+    SwipeRefreshLayout swipeRefreshLayout;
+    public static ArrayList<String> eventList = new ArrayList<>();
 
     public ScheduleFragment() {
 
@@ -50,8 +50,8 @@ public class ScheduleFragment extends Fragment {
 
 
         fab = view.findViewById(R.id.fab);
-        lv = view.findViewById(R.id.list);
-        srl = view.findViewById(R.id.swiperefresh);
+        lv_event = view.findViewById(R.id.list);
+        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
 
 
         if(hasPermission(getContext(), Manifest.permission.READ_CALENDAR)&&hasPermission(getContext(),Manifest.permission.WRITE_CALENDAR))
@@ -69,12 +69,9 @@ public class ScheduleFragment extends Fragment {
             startActivity(intent);
 
         });
-        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                srl.setRefreshing(false);
-                readEvent();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(false);
+            readEvent();
         });
 
         return view;
@@ -95,14 +92,14 @@ public class ScheduleFragment extends Fragment {
         }
     }
     public void readEvent(){
-        ev = EventsAdderUtility.readCalendarEvent(getContext());
-        ArrayAdapter<String> aa = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_2,android.R.id.text1,ev){
+        eventList = EventsAdderUtility.readCalendarEvent(getContext());
+        ArrayAdapter<String> aa = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_2,android.R.id.text1, eventList){
             @Override
-            public View getView(int pos, View convert, ViewGroup group) {
+            public View getView(int pos, View convert,@NonNull ViewGroup group) {
                 View v = super.getView(pos,convert,group);
                 TextView t1 = v.findViewById(android.R.id.text1);
                 TextView t2 = v.findViewById(android.R.id.text2);
-                if(getItem(pos).indexOf(" ") == -1){
+                if(!getItem(pos).contains(" ")){
                     t1.setText("N/A");
                     t2.setText("N/A");
                     return v;
@@ -112,6 +109,6 @@ public class ScheduleFragment extends Fragment {
                 return v;
             }
         };
-        lv.setAdapter(aa);
+        lv_event.setAdapter(aa);
     }
 }
