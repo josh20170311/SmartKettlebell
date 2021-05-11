@@ -21,11 +21,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.josh.smartkettlebell.R;
-import com.josh.smartkettlebell.ui.device.DeviceBrowserActivity;
+import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 
 import java.util.List;
 
@@ -57,9 +58,6 @@ public class DeviceScanActivity extends AppCompatActivity {
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
-            for (ScanResult r : results){
-                //Log.d(TAG, "onBatchScanResults: "+r);
-            }
         }
 
         @Override
@@ -76,9 +74,9 @@ public class DeviceScanActivity extends AppCompatActivity {
         btn_connect = findViewById(R.id.btn_connect);
         btn_connect.setOnClickListener(v -> {
             if(isScanning){
-                btn_connect.setText("Scan");
+                btn_connect.setText(R.string.Scan);
             }else {
-                btn_connect.setText("Scanning");
+                btn_connect.setText(R.string.Scanning);
             }
             scanDevice();
         });
@@ -86,9 +84,8 @@ public class DeviceScanActivity extends AppCompatActivity {
         rv_deviceList = findViewById(R.id.rv_deviceList);
         rv_deviceList.setAdapter(listAdapter);
         rv_deviceList.setLayoutManager(new LinearLayoutManager(this));
-        rv_deviceList.setOnClickListener(e -> {
-            Log.d(TAG, "onCreate: "+e.getId());
-        });
+        rv_deviceList.setOnClickListener(e ->
+                Log.d(TAG, "onCreate: "+e.getId()));
 
         requestEnableLocation();//要求打開位置
         requestEnableBluetooth();//要求打開藍芽
@@ -162,9 +159,7 @@ public class DeviceScanActivity extends AppCompatActivity {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
                     })
-                    .setNegativeButton("Cancel", (dialogInterface, param)->{
-                        finish();
-                    })
+                    .setNegativeButton("Cancel", (dialogInterface, param)-> finish())
                     .show();
         }
 //        boolean is_network_enabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -178,12 +173,12 @@ public class DeviceScanActivity extends AppCompatActivity {
 //            startActivityForResult(intent, EnableBluetoothRequestCode);
 //        }
     }
-    public void connect(String address, String name){
-        Intent intent = new Intent(this, DeviceBrowserActivity.class);
-        intent.putExtra(DeviceBrowserActivity.EXTRA_DEVICE_ADDRESS,address);
-        intent.putExtra(DeviceBrowserActivity.EXTRA_DEVICE_NAME,name);
-        startActivity(intent);
+    public void onItemClicked(String address){
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putString(SettingsFragment.KEY_DEVICE_ADDRESS,address)
+                    .apply();
+            finish();
     }
-
 
 }

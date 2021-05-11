@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Checkable;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -119,7 +118,6 @@ public class TrainingActivity extends AppCompatActivity {
             if(currentExerciseIndex >= exerciseList.size()) {
                 lockReceivingData = true;
                 //寫入資料庫
-                //TODO
                 new Thread(() -> {
                     getSharedPreferences(ChallengeFragment.PREFERENCE_NAME_CHALLENGE,MODE_PRIVATE)
                     .edit()
@@ -178,7 +176,7 @@ public class TrainingActivity extends AppCompatActivity {
         map_setting.put("squat"     ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
         map_setting.put("swing"     ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
     }
-    String TAG = "myTag";
+
     public void count(float[] data){//call by myGattCallBack
         if(currentExerciseIndex >= exerciseList.size())
             return;

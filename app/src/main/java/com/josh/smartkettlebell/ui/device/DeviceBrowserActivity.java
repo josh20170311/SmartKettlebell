@@ -45,14 +45,14 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
     public static final String EXTRA_DEVICE_NAME = "com.josh.smartkattlebell.ui.device.EXTRA_DEVICE_NAME";
 
     private LineChart chart_acc, chart_facc, chart_ahrs, chart_gyr, chart_mag;
-    private TextView tv_name, tv_address, tv_rssi, tv_noti, tv_motionData, tv_status;
+    private TextView tv_motionData;
+    private TextView tv_status;
     private Button btn_recordData;
     private EditText et_name;
-    private EditText et_number;
     private MyBluetoothService mBluetoothService;
     private String deviceAddress;
     private String deviceName;
-    private MyDBHelper dbHelper = new MyDBHelper(this, MyContract.DATABASE_NAME);
+    private final MyDBHelper dbHelper = new MyDBHelper(this, MyContract.DATABASE_NAME);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +74,19 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
             deviceName = "";
         }
 
+        setView();
 
+
+        filter.addAction(MyBluetoothService.ACTION_CONNECTED);
+        filter.addAction(MyBluetoothService.ACTION_DISCONNECTED);
+        filter.addAction(MyBluetoothService.ACTION_SHOW_DATA);
+        filter.addAction(MyBluetoothService.ACTION_SERVICE_DISCOVERED);
+        registerReceiver(receiver,filter);
+
+        bindService(new Intent(this,MyBluetoothService.class),connection,BIND_AUTO_CREATE);
+
+    }
+    void setView(){
         chart_acc = findViewById(R.id.chart_acc);
         chart_facc = findViewById(R.id.chart_facc);
         chart_ahrs = findViewById(R.id.chart_ahrs);
@@ -86,12 +98,12 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         setChart(chart_gyr);
         setChart(chart_mag);
 
-        tv_name = findViewById(R.id.tv_DeviceName);
+        TextView tv_name = findViewById(R.id.tv_DeviceName);
         tv_name.setText(deviceName);
-        tv_address = findViewById(R.id.tv_DeviceAddress);
+        TextView tv_address = findViewById(R.id.tv_DeviceAddress);
         tv_address.setText(deviceAddress);
-        tv_rssi = findViewById(R.id.tv_DeviceRssi);
-        tv_noti = findViewById(R.id.tv_Notification);
+        TextView tv_rssi = findViewById(R.id.tv_DeviceRssi);
+        TextView tv_noti = findViewById(R.id.tv_Notification);
         tv_motionData = findViewById(R.id.tv_MotionData);
         tv_status = findViewById(R.id.tv_DeviceStatus);
 
@@ -99,16 +111,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         btn_recordData.setOnClickListener(this);
 
         et_name = findViewById(R.id.et_tag);
-        et_number = findViewById(R.id.et_number);
-
-        filter.addAction(MyBluetoothService.ACTION_CONNECTED);
-        filter.addAction(MyBluetoothService.ACTION_DISCONNECTED);
-        filter.addAction(MyBluetoothService.ACTION_SHOW_DATA);
-        filter.addAction(MyBluetoothService.ACTION_SERVICE_DISCOVERED);
-        registerReceiver(receiver,filter);
-
-        bindService(new Intent(this,MyBluetoothService.class),connection,BIND_AUTO_CREATE);
-
+        EditText et_number = findViewById(R.id.et_number);
     }
 
     private void setChart(LineChart chart){
@@ -124,13 +127,13 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
 
             LineDataSet x,y,z;
             if(chart.equals(chart_ahrs)){
-                x = new LineDataSet(new ArrayList<Entry>(), "roll");
-                y = new LineDataSet(new ArrayList<Entry>(), "pitch");
-                z = new LineDataSet(new ArrayList<Entry>(), "yaw");
+                x = new LineDataSet(new ArrayList<>(), "roll");
+                y = new LineDataSet(new ArrayList<>(), "pitch");
+                z = new LineDataSet(new ArrayList<>(), "yaw");
             }else{
-                x = new LineDataSet(new ArrayList<Entry>(), "x");
-                y = new LineDataSet(new ArrayList<Entry>(), "y");
-                z = new LineDataSet(new ArrayList<Entry>(), "z");
+                x = new LineDataSet(new ArrayList<>(), "x");
+                y = new LineDataSet(new ArrayList<>(), "y");
+                z = new LineDataSet(new ArrayList<>(), "z");
             }
 
             x.setColor(Color.RED);
@@ -303,15 +306,11 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
                             .putString(SettingsFragment.KEY_DEVICE_STATE,"Connected")
                             .apply();
                     sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
-                    //Log.d(TAG, "onReceive: "+deviceAddress);
-                    runOnUiThread(() -> {
-                        tv_status.setText(R.string.connected);
-                    });
+
+                    runOnUiThread(() -> tv_status.setText(R.string.connected));
                     break;
                 case MyBluetoothService.ACTION_DISCONNECTED:
-                    runOnUiThread(()->{
-                        tv_status.setText(R.string.disconnected);
-                    });
+                    runOnUiThread(()-> tv_status.setText(R.string.disconnected));
                     break;
                 case MyBluetoothService.ACTION_SHOW_DATA:
                     float[] data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_DATA);

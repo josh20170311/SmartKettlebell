@@ -32,10 +32,12 @@ public class TrainingPlanActivity extends AppCompatActivity {
     public static final String EXTRA_EXERCISE_NUMBER = "EXTRA_EXERCISE_NUMBER";
     public static final String EXTRA_EXERCISE_POSITION = "EXTRA_EXERCISE_POSITION";
     public static final String EXTRA_REQUEST_CODE = "EXTRA_REQUEST_CODE";
+    public static final String ACTION_SET_DEVICE = "action_set_device";
     public static int REQUEST_CODE_ADD_EXERCISE = 300;
     public static int RESULT_CODE_ADD_EXERCISE = 301;
     public static int REQUEST_CODE_EDIT_EXERCISE = 400;
     public static int RESULT_CODE_EDIT_EXERCISE = 401;
+
     Button btn_start,btn_start_without_device;
     FloatingActionButton fab;
     RecyclerView rv;
@@ -101,6 +103,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
                         .setTitle("Please Set a Device")
                         .setPositiveButton("OK", (dialog, which) -> {
                                 Intent intent = new Intent(this, DeviceScanActivity.class);
+                                intent.setAction(ACTION_SET_DEVICE);
                                 startActivity(intent);
                             })
                         .show();
@@ -133,9 +136,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
 
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar_add_exercise);
-        toolbar.setNavigationOnClickListener(v -> {
-            finish();
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     @Override
@@ -159,4 +160,5 @@ public class TrainingPlanActivity extends AppCompatActivity {
         }
 
     }
+
 }

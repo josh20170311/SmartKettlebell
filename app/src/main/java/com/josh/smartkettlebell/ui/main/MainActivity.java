@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "myTAG : MainActivity : ";
     public static final String ACTION_UPDATE_SETTINGS_PREFERENCE = "com.josh.smartkettlebell.ACTION_UPDATE_SETTINGS_PREFERENCE";
+    public static final int RESULT_CODE_SETTING = 300 ;
     Fragment trainingFragment;
     Fragment scheduleFragment;
     Fragment dataFragment;

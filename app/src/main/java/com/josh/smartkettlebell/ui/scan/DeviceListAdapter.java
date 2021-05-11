@@ -37,7 +37,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         holder.tv_itemName.setText(name);
         holder.tv_itemAddr.setText(address);
         holder.tv_itemRssi.setText(String.valueOf(deviceList.get(position).getRssi()));
-        holder.itemView.setOnClickListener(e -> ((DeviceScanActivity)context).connect(address,name));
+        holder.itemView.setOnClickListener(e -> ((DeviceScanActivity)context).onItemClicked(address));
     }
 
     @Override

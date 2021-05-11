@@ -76,7 +76,9 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="add_event">Adding an event</string>
-<!-- Events Adder-->
+    <string name="Scan">Scan</string>
+    <string name="Scanning">Scanning</string>
+    <!-- Events Adder-->
 
 
 </resources>
