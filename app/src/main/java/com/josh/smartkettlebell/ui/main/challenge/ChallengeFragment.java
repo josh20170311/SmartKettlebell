@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
 import com.josh.smartkettlebell.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -23,9 +23,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class ChallengeFragment extends Fragment {
-    TextView textView, timeText, chanllengeText, chanllengeText2, chanllengeTimes, chanllengeTimes2, Set;
+    TextView textView, timeText, challengeText, challengeText2, challengeTimes, challengeTimes2, Set;
     GifImageView gif1, gif2;
-    Button gotochanllengeBtn;
+    Button gotoChallengeBtn;
+    public static String PREFERENCE_NAME_CHALLENGE = "CHALLENGE";
+    public static String PREFERENCE_NAME_DATE = "DATE";
+    public static String PREFERENCE_KEY_DATE = "date";
+    public static String PREFERENCE_KEY_CHALLENGE = "challenge";
 
 
     @Override
@@ -44,127 +48,148 @@ public class ChallengeFragment extends Fragment {
 
 
         textView = view.findViewById(R.id.txt);
-        chanllengeText = view.findViewById(R.id.chanllengetext);
-        chanllengeText2 = view.findViewById(R.id.chanllengetext2);
-        chanllengeTimes = view.findViewById(R.id.chanllengetimes);
-        chanllengeTimes2 = view.findViewById(R.id.chanllengetimes2);
+        challengeText = view.findViewById(R.id.chanllengetext);
+        challengeText2 = view.findViewById(R.id.chanllengetext2);
+        challengeTimes = view.findViewById(R.id.chanllengetimes);
+        challengeTimes2 = view.findViewById(R.id.chanllengetimes2);
         Set = view.findViewById(R.id.set);
         gif1 = view.findViewById(R.id.gif1);
         gif2 = view.findViewById(R.id.gif2);
-        gotochanllengeBtn = view.findViewById(R.id.gotochanllengebtn);
+        gotoChallengeBtn = view.findViewById(R.id.gotochanllengebtn);
 
 
         //讀取當天日期
         timeText = view.findViewById(R.id.txt2);
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault());
         Date curDate = new Date(System.currentTimeMillis()); // 獲取當前時間
         String today = formatter.format(curDate);
 
         //建立日期的SharedPreferences
-        SharedPreferences timePref = getActivity().getSharedPreferences("DATE", MODE_PRIVATE);
-        String date = getActivity().getSharedPreferences("DATE", MODE_PRIVATE)//讀取儲存的日期
-                .getString("date", "");
+        SharedPreferences timePref = getActivity().getSharedPreferences(PREFERENCE_NAME_DATE, MODE_PRIVATE);
+        String date = getActivity().getSharedPreferences(PREFERENCE_KEY_DATE, MODE_PRIVATE)//讀取儲存的日期
+                .getString(PREFERENCE_KEY_DATE, "");
 
 //        textView.setText("date="+date);
         timeText.setText(today);
-
 
 
         if (!date.equals(today)) { //是否已換日
             //更新存入的日期
             timePref.edit()
                     .putString("date", today)
-                    .commit();
+                    .apply();
 
 
-            String dailyChanllenge = changeChanllenge();//呼叫changeChanllenge
-            String[] dailyChanllenges = dailyChanllenge.split(",");
+            String dailyChallenge = changeChallenge();//呼叫changeChallenge
+            String[] dailyChallenges = dailyChallenge.split(",");
             //儲存今日的挑戰
-            SharedPreferences pref = getActivity().getSharedPreferences("CHANLLENGE", MODE_PRIVATE);
+            SharedPreferences pref = getActivity().getSharedPreferences(PREFERENCE_NAME_CHALLENGE, MODE_PRIVATE);
             pref.edit()
-                    .putString("chanllenge", dailyChanllenge)
-                    .commit();
+                    .putString(PREFERENCE_KEY_CHALLENGE, dailyChallenge)
+                    .apply();
             //顯示今日的挑戰
-            chanllengeText.setText(dailyChanllenges[0]);
-            chanllengeText2.setText(dailyChanllenges[2]);
-            chanllengeTimes.setText(dailyChanllenges[1]);
-            chanllengeTimes2.setText(dailyChanllenges[3]);
-            Set.setText(dailyChanllenges[4]);
+            challengeText.setText(dailyChallenges[0]);
+            challengeText2.setText(dailyChallenges[2]);
+            challengeTimes.setText(dailyChallenges[1]);
+            challengeTimes2.setText(dailyChallenges[3]);
+            Set.setText(dailyChallenges[4]);
 
-            if (dailyChanllenges[0].equals("壺鈴擺盪")) {
-                gif1.setImageResource(R.drawable.kettlebell_swings);
-            } else if (dailyChanllenges[0].equals("壺鈴硬舉")) {
-                gif1.setImageResource(R.drawable.kettlebell_deadlift);
-            } else if (dailyChanllenges[0].equals("壺鈴推舉")) {
-                gif1.setImageResource(R.drawable.kettlebell_press);
-            } else if (dailyChanllenges[0].equals("壺鈴單手划船")) {
-                gif1.setImageResource(R.drawable.kettlebell_bent_over_row);
-            } else if (dailyChanllenges[0].equals("壺鈴深蹲")) {
-                gif1.setImageResource(R.drawable.kettlebell_squat);
+            switch (dailyChallenges[0]) {
+                case "壺鈴擺盪":
+                    gif1.setImageResource(R.drawable.kettlebell_swings);
+                    break;
+                case "壺鈴硬舉":
+                    gif1.setImageResource(R.drawable.kettlebell_deadlift);
+                    break;
+                case "壺鈴推舉":
+                    gif1.setImageResource(R.drawable.kettlebell_press);
+                    break;
+                case "壺鈴單手划船":
+                    gif1.setImageResource(R.drawable.kettlebell_bent_over_row);
+                    break;
+                case "壺鈴深蹲":
+                    gif1.setImageResource(R.drawable.kettlebell_squat);
+                    break;
             }
 
-            if (dailyChanllenges[2].equals("壺鈴擺盪")) {
-                gif2.setImageResource(R.drawable.kettlebell_swings);
-            } else if (dailyChanllenges[2].equals("壺鈴硬舉")) {
-                gif2.setImageResource(R.drawable.kettlebell_deadlift);
-            } else if (dailyChanllenges[2].equals("壺鈴推舉")) {
-                gif2.setImageResource(R.drawable.kettlebell_press);
-            } else if (dailyChanllenges[2].equals("壺鈴單手划船")) {
-                gif2.setImageResource(R.drawable.kettlebell_bent_over_row);
-            } else if (dailyChanllenges[2].equals("壺鈴深蹲")) {
-                gif2.setImageResource(R.drawable.kettlebell_squat);
+            switch (dailyChallenges[2]) {
+                case "壺鈴擺盪":
+                    gif2.setImageResource(R.drawable.kettlebell_swings);
+                    break;
+                case "壺鈴硬舉":
+                    gif2.setImageResource(R.drawable.kettlebell_deadlift);
+                    break;
+                case "壺鈴推舉":
+                    gif2.setImageResource(R.drawable.kettlebell_press);
+                    break;
+                case "壺鈴單手划船":
+                    gif2.setImageResource(R.drawable.kettlebell_bent_over_row);
+                    break;
+                case "壺鈴深蹲":
+                    gif2.setImageResource(R.drawable.kettlebell_squat);
+                    break;
             }
 
 
         } else {
-            String dailyChanllenge = getActivity().getSharedPreferences("CHANLLENGE", MODE_PRIVATE)
-                    .getString("chanllenge", "");
-            String[] dailyChanllenges = dailyChanllenge.split(",");
+            String dailyChallenge = getActivity().getSharedPreferences(PREFERENCE_KEY_CHALLENGE, MODE_PRIVATE)
+                    .getString(PREFERENCE_KEY_CHALLENGE, "");
+            String[] dailyChallenges = dailyChallenge.split(",");
             //顯示今日的挑戰
-            chanllengeText.setText(dailyChanllenges[0]);
-            chanllengeText2.setText(dailyChanllenges[2]);
-            chanllengeTimes.setText(dailyChanllenges[1]);
-            chanllengeTimes2.setText(dailyChanllenges[3]);
-            Set.setText(dailyChanllenges[4]);
+            challengeText.setText(dailyChallenges[0]);
+            challengeText2.setText(dailyChallenges[2]);
+            challengeTimes.setText(dailyChallenges[1]);
+            challengeTimes2.setText(dailyChallenges[3]);
+            Set.setText(dailyChallenges[4]);
 
             //根據今天的挑戰抓GIF
-            if (dailyChanllenges[0].equals("壺鈴擺盪")) {
-                gif1.setImageResource(R.drawable.kettlebell_swings);
-            } else if (dailyChanllenges[0].equals("壺鈴硬舉")) {
-                gif1.setImageResource(R.drawable.kettlebell_deadlift);
-            } else if (dailyChanllenges[0].equals("壺鈴推舉")) {
-                gif1.setImageResource(R.drawable.kettlebell_press);
-            } else if (dailyChanllenges[0].equals("壺鈴單手划船")) {
-                gif1.setImageResource(R.drawable.kettlebell_bent_over_row);
-            } else if (dailyChanllenges[0].equals("壺鈴深蹲")) {
-                gif1.setImageResource(R.drawable.kettlebell_squat);
+            switch (dailyChallenges[0]) {
+                case "壺鈴擺盪":
+                    gif1.setImageResource(R.drawable.kettlebell_swings);
+                    break;
+                case "壺鈴硬舉":
+                    gif1.setImageResource(R.drawable.kettlebell_deadlift);
+                    break;
+                case "壺鈴推舉":
+                    gif1.setImageResource(R.drawable.kettlebell_press);
+                    break;
+                case "壺鈴單手划船":
+                    gif1.setImageResource(R.drawable.kettlebell_bent_over_row);
+                    break;
+                case "壺鈴深蹲":
+                    gif1.setImageResource(R.drawable.kettlebell_squat);
+                    break;
             }
 
-            if (dailyChanllenges[2].equals("壺鈴擺盪")) {
-                gif2.setImageResource(R.drawable.kettlebell_swings);
-            } else if (dailyChanllenges[2].equals("壺鈴硬舉")) {
-                gif2.setImageResource(R.drawable.kettlebell_deadlift);
-            } else if (dailyChanllenges[2].equals("壺鈴推舉")) {
-                gif2.setImageResource(R.drawable.kettlebell_press);
-            } else if (dailyChanllenges[2].equals("壺鈴單手划船")) {
-                gif2.setImageResource(R.drawable.kettlebell_bent_over_row);
-            } else if (dailyChanllenges[2].equals("壺鈴深蹲")) {
-                gif2.setImageResource(R.drawable.kettlebell_squat);
+            switch (dailyChallenges[2]) {
+                case "壺鈴擺盪":
+                    gif2.setImageResource(R.drawable.kettlebell_swings);
+                    break;
+                case "壺鈴硬舉":
+                    gif2.setImageResource(R.drawable.kettlebell_deadlift);
+                    break;
+                case "壺鈴推舉":
+                    gif2.setImageResource(R.drawable.kettlebell_press);
+                    break;
+                case "壺鈴單手划船":
+                    gif2.setImageResource(R.drawable.kettlebell_bent_over_row);
+                    break;
+                case "壺鈴深蹲":
+                    gif2.setImageResource(R.drawable.kettlebell_squat);
+                    break;
             }
         }
-
 
 
         return view;
     }
 
 
-    public String changeChanllenge() {
-        String chanllenge = "";
-        String times = "";
+    public String changeChallenge() {
+        StringBuilder challenge = new StringBuilder();
+        StringBuilder times = new StringBuilder();
         String ugoki = "";
         int oldnumber = 0;
-        String[] chanllenges = new String[2];
         Random random = new Random();
         for (int i = 0; i < 2; i++) {
             int number = random.nextInt(5) + 1;
@@ -197,25 +222,24 @@ public class ChallengeFragment extends Fragment {
             int rand = random.nextInt(4) + 1;
             switch (rand) {
                 case 1:
-                    times = "5下";
+                    times = new StringBuilder("5下");
                     break;
                 case 2:
-                    times = "10下";
+                    times = new StringBuilder("10下");
                     break;
                 case 3:
-                    times = "15下";
+                    times = new StringBuilder("15下");
                     break;
                 case 4:
-                    times = "20下";
+                    times = new StringBuilder("20下");
                     break;
             }
-            times = times + ",";
-            chanllenge = chanllenge + ugoki + times;
-            chanllenges[i] = ugoki;
+            times.append(",");
+            challenge.append(ugoki).append(times);
         }
 
         int setTimes = random.nextInt(3) + 1;
-        chanllenge = chanllenge + "共" + setTimes + "組";
-        return chanllenge;
+        challenge.append("共").append(setTimes).append("組");
+        return challenge.toString();
     }
 }
