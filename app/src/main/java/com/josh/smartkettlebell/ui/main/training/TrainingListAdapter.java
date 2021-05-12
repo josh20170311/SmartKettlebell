@@ -44,9 +44,8 @@ public class TrainingListAdapter extends RecyclerView.Adapter<TrainingListAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         cursor_training.moveToPosition(position);
         long startTime = cursor_training.getLong(cursor_training.getColumnIndex(MyContract.TrainingEntry.COLUMN_DATE));
-        long endTime = startTime + cursor_training.getLong(cursor_training.getColumnIndex(MyContract.TrainingEntry.COLUMN_DURATION));
+        long endTime = startTime + 1000*cursor_training.getLong(cursor_training.getColumnIndex(MyContract.TrainingEntry.COLUMN_DURATION));
         long id = cursor_training.getLong(cursor_training.getColumnIndex(MyContract.TrainingEntry._ID));
-        Log.d(TAG, "onBindViewHolder: "+id);
         holder.tv_start_time.setText(dateFormat.format(new Date(startTime)));
         holder.tv_end_time.setText(dateFormat.format(new Date(endTime)));
         holder.rv_exerciseList.setLayoutManager(new LinearLayoutManager(context));
