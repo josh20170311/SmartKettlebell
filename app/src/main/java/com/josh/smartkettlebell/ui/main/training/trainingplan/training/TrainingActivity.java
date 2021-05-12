@@ -159,7 +159,7 @@ public class TrainingActivity extends AppCompatActivity {
         gv_demo.setGif(map_gif.getOrDefault(name,0));
         counter.reset(map_setting.getOrDefault(name,null));
     }
-    Counter counter = new Counter(new Counter.Setting(0,null));
+    Counter counter = new Counter();
 
     HashMap<String, Integer> map_gif = new HashMap<>();
     HashMap<String, Counter.Setting> map_setting = new HashMap<>();
@@ -170,17 +170,22 @@ public class TrainingActivity extends AppCompatActivity {
         map_gif.put("deadlift",R.drawable.deadlift_gif);
         map_gif.put("squat",R.drawable.squat_gif);
         map_gif.put("swing",R.drawable.swing_gif);
-        map_setting.put("push"      ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
-        map_setting.put("row"       ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
-        map_setting.put("deadlift"  ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
-        map_setting.put("squat"     ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
-        map_setting.put("swing"     ,new Counter.Setting(-1, Counter.Setting.Target.PEAK));
+        map_setting.put("push"      ,new Counter.Setting(-1,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("row"       ,new Counter.Setting(-1,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("deadlift"  ,new Counter.Setting(-1,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("squat"     ,new Counter.Setting(-1,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("swing"     ,new Counter.Setting(-1,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
     }
 
     public void count(float[] data){//call by myGattCallBack
         if(currentExerciseIndex >= exerciseList.size())
             return;
-        if(counter.count(data[0])){
+        if(counter.count(data)){
             count++;
             if(count<exerciseList.get(currentExerciseIndex).getNumber())
                 tv_count.setText(String.valueOf(count));
