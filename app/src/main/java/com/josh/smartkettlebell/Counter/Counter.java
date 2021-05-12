@@ -1,8 +1,5 @@
 package com.josh.smartkettlebell.Counter;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-
 public class Counter {
     float prevData = Float.NaN;
     float THRESH_HOLD;

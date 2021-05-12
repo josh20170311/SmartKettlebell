@@ -38,7 +38,7 @@ import static com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment.PERMISS
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "myTAG : MainActivity : ";
+    public static final String TAG = "myTag";
     public static final String ACTION_UPDATE_SETTINGS_PREFERENCE = "com.josh.smartkettlebell.ACTION_UPDATE_SETTINGS_PREFERENCE";
     public static final int RESULT_CODE_SETTING = 300 ;
     Fragment trainingFragment;

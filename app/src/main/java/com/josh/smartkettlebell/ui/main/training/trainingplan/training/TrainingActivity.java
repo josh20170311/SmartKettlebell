@@ -117,12 +117,15 @@ public class TrainingActivity extends AppCompatActivity {
             currentExerciseIndex++;
             if(currentExerciseIndex >= exerciseList.size()) {
                 lockReceivingData = true;
-                //寫入資料庫
+                int requestCode = getIntent().getIntExtra(EXTRA_REQUEST_CODE,-1);
                 new Thread(() -> {
-                    getSharedPreferences(ChallengeFragment.PREFERENCE_NAME_CHALLENGE,MODE_PRIVATE)
-                    .edit()
-                    .putBoolean(ChallengeFragment.PREFERENCE_KEY_DONE,true)
-                    .apply();
+                    if(requestCode == ChallengeFragment.REQUEST_CODE_CHALLENGE){
+                        getSharedPreferences(ChallengeFragment.PREFERENCE_NAME_CHALLENGE,MODE_PRIVATE)
+                        .edit()
+                        .putBoolean(ChallengeFragment.PREFERENCE_KEY_DONE,true)
+                        .apply();
+                    }
+                    //寫入資料庫
                     long trainingID = myDBHelper.createTraining(duration);
                     for(Exercise e : exerciseList){
                         long recordID = myDBHelper.createRecord(e.getName(),trainingID,e.getNumber());

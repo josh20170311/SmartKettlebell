@@ -21,16 +21,23 @@ public class MyDBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getTrainings(){
-        return getReadableDatabase().rawQuery("SELECT * FROM " + TrainingEntry.TABLE_NAME, new String[]{});
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s ;",
+                TrainingEntry.TABLE_NAME), new String[]{});
     }
 
     public Cursor getRecords() {
-        return getReadableDatabase().rawQuery("SELECT * FROM " + RecordEntry.TABLE_NAME, new String[]{});
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s ;",
+                RecordEntry.TABLE_NAME), new String[]{});
     }
 
-    public Cursor getData(int RecordId) {
-        return getReadableDatabase().rawQuery("SELECT * FROM " + DataEntry.TABLE_NAME
-                + " WHERE _id = ?;", new String[]{RecordId + ""});
+    public Cursor getRecords(long TrainingId) {
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s = ? ;",
+                RecordEntry.TABLE_NAME,RecordEntry.COLUMN_TRAINING_ID), new String[]{TrainingId + ""});
+    }
+
+    public Cursor getData(long RecordId) {
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s = ? ;",
+                DataEntry.TABLE_NAME,DataEntry.COLUMN_RECORD_ID), new String[]{RecordId + ""});
     }
 
     public void insertData(float[] data, float[] facc_data, long recordId, long timeStamp) {
