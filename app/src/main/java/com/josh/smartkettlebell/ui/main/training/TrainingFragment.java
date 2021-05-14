@@ -2,24 +2,18 @@ package com.josh.smartkettlebell.ui.main.training;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.josh.smartkettlebell.R;
-import com.josh.smartkettlebell.db.MyContract;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.TrainingPlanActivity;
 import com.josh.smartkettlebell.ui.main.training.trainingplan.training.TrainingActivity;
-
-import static com.josh.smartkettlebell.ui.main.MainActivity.TAG;
 
 public class TrainingFragment extends Fragment {
     RecyclerView rv_training;
@@ -53,8 +47,8 @@ public class TrainingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(rv_training != null){
-            ((TrainingListAdapter)rv_training.getAdapter()).update();
+        if (rv_training != null) {
+            ((TrainingListAdapter) rv_training.getAdapter()).update();
         }
     }
 }

@@ -4,14 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
-import android.provider.ContactsContract;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 
@@ -23,8 +19,6 @@ public class EventsAdderUtility {
     public static ArrayList<String> descriptions = new ArrayList<>();
     public static ArrayList<String> eventList = new ArrayList<>();
     public static String MAGIC_TAG = "#SmartKettleBell";
-
-    static String TAG = "myTag";
 
     public static ArrayList<String> readCalendarEvent(Context context) {
         Calendar startTime = Calendar.getInstance();
@@ -78,7 +72,7 @@ public class EventsAdderUtility {
 
     public static String getDate(long milliSeconds) {
         SimpleDateFormat formatter = new SimpleDateFormat(
-                "HH:mm",Locale.getDefault());
+                "HH:mm", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());

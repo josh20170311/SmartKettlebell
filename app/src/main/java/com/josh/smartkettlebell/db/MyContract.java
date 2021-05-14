@@ -46,7 +46,7 @@ public class MyContract {
         public static final String COLUMN_NUMBER = "Number";
     }
 
-    public static final class TrainingEntry implements BaseColumns{
+    public static final class TrainingEntry implements BaseColumns {
         public static final String TABLE_NAME = "Training";
         public static final String COLUMN_DATE = "Date";
         public static final String COLUMN_DURATION = "Duration";

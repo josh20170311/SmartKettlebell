@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!--    enabled : 表示要不要出現在UI上-->
+    <!--    enabled : 表示要不要出現在UI上-->
     <group
         android:id="@+id/menu_group"
         android:checkableBehavior="single">
 
-    <item
-        android:id="@+id/page_training"
-        android:enabled="true"
-        android:title="@string/training"
-        android:icon="@drawable/ic_baseline_directions_run_24"/>
+        <item
+            android:id="@+id/page_training"
+            android:enabled="true"
+            android:icon="@drawable/ic_baseline_directions_run_24"
+            android:title="@string/training" />
 
-    <item
-        android:id="@+id/page_schedule"
-        android:enabled="true"
-        android:title="@string/schedule"
-        android:icon="@drawable/ic_baseline_calendar_today_24"/>
+        <item
+            android:id="@+id/page_schedule"
+            android:enabled="true"
+            android:icon="@drawable/ic_baseline_calendar_today_24"
+            android:title="@string/schedule" />
 
-    <item
-        android:id="@+id/page_data"
-        android:enabled="true"
-        android:title="@string/data"
-        android:icon="@drawable/ic_baseline_insert_drive_file_24"/>
+        <item
+            android:id="@+id/page_data"
+            android:enabled="true"
+            android:icon="@drawable/ic_baseline_insert_drive_file_24"
+            android:title="@string/data" />
 
-    <item
-        android:id="@+id/page_challenge"
-        android:enabled="true"
-        android:title="@string/challenge"
-        android:icon="@drawable/ic_trophy"/>
-    <item
-        android:id="@+id/page_setting"
-        android:enabled="true"
-        android:title="@string/setting"
-        android:icon="@drawable/ic_baseline_settings_24"/>
+        <item
+            android:id="@+id/page_challenge"
+            android:enabled="true"
+            android:icon="@drawable/ic_trophy"
+            android:title="@string/challenge" />
+        <item
+            android:id="@+id/page_setting"
+            android:enabled="true"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/setting" />
 
     </group>
 </menu>

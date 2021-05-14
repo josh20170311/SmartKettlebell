@@ -1,24 +1,25 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-        <PreferenceCategory app:title="Device">
-            <EditTextPreference app:key="com.josh.smartkettlebell.KEY_DEVICE_ADDRESS"
-                app:title="Device Address"
-                app:useSimpleSummaryProvider="true"
-                app:enabled="false"/>
-            <Preference
-                app:key="scanActivity"
-                app:title="Scan Device">
-                <intent
-                    android:targetPackage="com.josh.smartkettlebell"
-                    android:targetClass="com.josh.smartkettlebell.ui.scan.DeviceScanActivity"
-                    android:action="com.josh.smartkettlebell.ui.scan.action_from_setting"/>
-            </Preference>
-            <Preference
-                app:key="Sensor Browser"
-                app:title="Sensor Browser">
-                <intent
-                    android:targetPackage="com.josh.smartkettlebell"
-                    android:targetClass="com.josh.smartkettlebell.ui.device.DeviceInfoActivity"/>
-            </Preference>
-        </PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Device">
+        <EditTextPreference
+            app:enabled="false"
+            app:key="com.josh.smartkettlebell.KEY_DEVICE_ADDRESS"
+            app:title="Device Address"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+            app:key="scanActivity"
+            app:title="Scan Device">
+            <intent
+                android:action="com.josh.smartkettlebell.ui.scan.action_from_setting"
+                android:targetClass="com.josh.smartkettlebell.ui.scan.DeviceScanActivity"
+                android:targetPackage="com.josh.smartkettlebell" />
+        </Preference>
+        <Preference
+            app:key="Sensor Browser"
+            app:title="Sensor Browser">
+            <intent
+                android:targetClass="com.josh.smartkettlebell.ui.device.DeviceInfoActivity"
+                android:targetPackage="com.josh.smartkettlebell" />
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -41,13 +41,12 @@ public class DataFragment extends Fragment {
         Cursor cursor_record = new MyDBHelper(getContext(), MyContract.DATABASE_NAME).getRecords();
         len = cursor_record.getCount();
         movement = new String[len][2];
-        while(cursor_record.moveToNext()){
+        while (cursor_record.moveToNext()) {
             movement[cursor_record.getPosition()][0]
                     = cursor_record.getString(cursor_record.getColumnIndex(MyContract.RecordEntry.COLUMN_EXERCISE_NAME));
             movement[cursor_record.getPosition()][1]
                     = cursor_record.getString(cursor_record.getColumnIndex(MyContract.RecordEntry.COLUMN_NUMBER));
         }
-
 
 
         LinearLayout l1 = view.findViewById(R.id.linear1);
@@ -85,13 +84,12 @@ public class DataFragment extends Fragment {
             public void onClick(View v) {
                 EditText et = view.findViewById(R.id.editText);
                 String txt = et.getText().toString();
-                for(int i = 0;i<len;i++){
-                    if(txt.equals(mv[i])){
-                        Toast.makeText(getContext(),mv[i]+" 總共做了 "+times[i]+"次",Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < len; i++) {
+                    if (txt.equals(mv[i])) {
+                        Toast.makeText(getContext(), mv[i] + " 總共做了 " + times[i] + "次", Toast.LENGTH_SHORT).show();
                         break;
-                    }
-                    else if(txt.equals("")){
-                        Toast.makeText(getContext(),"請輸入動作",Toast.LENGTH_SHORT).show();
+                    } else if (txt.equals("")) {
+                        Toast.makeText(getContext(), "請輸入動作", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

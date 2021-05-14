@@ -1,8 +1,8 @@
 package com.josh.smartkettlebell.ui.main.schedule;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.josh.smartkettlebell.R;
 

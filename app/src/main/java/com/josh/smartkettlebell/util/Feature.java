@@ -1,21 +1,18 @@
 package com.josh.smartkettlebell.util;
 
-import android.util.Log;
-
 import ai.djl.ndarray.NDArray;
 import ai.djl.ndarray.NDManager;
 
 public class Feature {
-    static final String TAG = "myTAG";
 
-    public static double[] getFeature_6axis(double[] accx,double[] accy, double[] accz,
-                        double[] gyrx, double[] gyry, double[] gyrz){
-        double[] features_acc = getFeature_3axis(accx,accy,accz);
-        double[] features_gyr = getFeature_3axis(gyrx,gyry,gyrz);
-        double[] result = new double[features_acc.length*2];
+    public static double[] getFeature_6axis(double[] accx, double[] accy, double[] accz,
+                                            double[] gyrx, double[] gyry, double[] gyrz) {
+        double[] features_acc = getFeature_3axis(accx, accy, accz);
+        double[] features_gyr = getFeature_3axis(gyrx, gyry, gyrz);
+        double[] result = new double[features_acc.length * 2];
 
-        System.arraycopy(features_acc, 0, result, 0,features_acc.length);
-        System.arraycopy(features_gyr, 0, result, features_acc.length,features_acc.length);
+        System.arraycopy(features_acc, 0, result, 0, features_acc.length);
+        System.arraycopy(features_gyr, 0, result, features_acc.length, features_acc.length);
 
         return result;
     }
@@ -40,9 +37,10 @@ public class Feature {
         result[result.length - 1] = cor_yz;
         return result;
     }
-    public static double[] getFeatures(double[] data){
 
-        try(NDManager manager = NDManager.newBaseManager()){
+    public static double[] getFeatures(double[] data) {
+
+        try (NDManager manager = NDManager.newBaseManager()) {
             NDArray array = manager.create(data);
             NDArray sorted = array.sort();
             long size = array.size();
@@ -59,24 +57,24 @@ public class Feature {
 
             double energy = array.sub(mean).square().sum().getDouble();
 
-            return new double[]{p5,p10,p25,p50,p90,mean, var,std,energy};
+            return new double[]{p5, p10, p25, p50, p90, mean, var, std, energy};
         }
     }
 
 
-    private static double percentile(NDArray array, int p){
+    private static double percentile(NDArray array, int p) {
         //linear interpolate
         long size = array.size();
-        double rank = (p/100.0)*(size-1);
-        long rank_i = (long)Math.floor(rank);
+        double rank = (p / 100.0) * (size - 1);
+        long rank_i = (long) Math.floor(rank);
         double rank_f = rank - rank_i;
         double xi = array.getDouble(rank_i);
-        double xj = (p == 100)?xi: array.getDouble(rank_i+1); // j = i+1
-        return array.getDouble(rank_i) + rank_f*(xj - xi);
+        double xj = (p == 100) ? xi : array.getDouble(rank_i + 1); // j = i+1
+        return array.getDouble(rank_i) + rank_f * (xj - xi);
     }
 
-    private static double pearson_correlation(double[] x, double[] y){
-        try(NDManager manager = NDManager.newBaseManager()){
+    private static double pearson_correlation(double[] x, double[] y) {
+        try (NDManager manager = NDManager.newBaseManager()) {
             int size = x.length;
             NDArray array_x = manager.create(x);
             NDArray array_y = manager.create(y);
@@ -88,7 +86,7 @@ public class Feature {
             double sum_sms = smx_mul_smy.sum().getDouble();
             double std_x = sub_mean_x.square().sum().sqrt().getDouble();
             double std_y = sub_mean_y.square().sum().sqrt().getDouble();
-            return sum_sms/std_x/std_y;
+            return sum_sms / std_x / std_y;
         }
 
     }

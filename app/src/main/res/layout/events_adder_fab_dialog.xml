@@ -9,18 +9,16 @@
         android:id="@+id/spnEx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/exercises"
-        android:prompt="@string/spnEx_prompt"
         android:layout_gravity="center"
-        />
+        android:entries="@array/exercises"
+        android:prompt="@string/spnEx_prompt" />
 
     <Spinner
         android:id="@+id/spnSet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/numbers"
-        android:prompt="@string/spnSet_prompt"
         android:layout_gravity="center"
-        />
+        android:entries="@array/numbers"
+        android:prompt="@string/spnSet_prompt" />
 
 </LinearLayout>

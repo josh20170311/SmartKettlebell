@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.josh.smartkettlebell.R;
@@ -33,7 +34,7 @@ public class ChallengeFragment extends Fragment {
     public static String PREFERENCE_KEY_DONE = "done";
     public static int REQUEST_CODE_CHALLENGE = 1000;
     public static int RESULT_CODE_CHALLENGE = 1001;
-    TextView  timeText, challengeText, challengeText2, challengeTimes, challengeTimes2, Set;
+    TextView timeText, challengeText, challengeText2, challengeTimes, challengeTimes2, Set;
     GifImageView gif1, gif2;
     Button gotoChallengeBtn;
     SharedPreferences challengePref;
@@ -75,7 +76,7 @@ public class ChallengeFragment extends Fragment {
             challengePref.edit()
                     .putString(PREFERENCE_KEY_DATE, today)
                     .putString(PREFERENCE_KEY_CHALLENGE, changeChallenge())
-                    .putBoolean(PREFERENCE_KEY_DONE,false)
+                    .putBoolean(PREFERENCE_KEY_DONE, false)
                     .apply();
         }
 
@@ -89,27 +90,27 @@ public class ChallengeFragment extends Fragment {
         Set.setText(String.format("各%s組", dailyChallenges[4]));
 
         //根據今天的挑戰抓GIF
-        setGif(gif1,dailyChallenges[0]);
-        setGif(gif2,dailyChallenges[2]);
+        setGif(gif1, dailyChallenges[0]);
+        setGif(gif2, dailyChallenges[2]);
 
-        if(challengePref.getBoolean(PREFERENCE_KEY_DONE,false)){
+        if (challengePref.getBoolean(PREFERENCE_KEY_DONE, false)) {
             disableGotoBtn();
             return view;
         }
 
         gotoChallengeBtn.setOnClickListener(e -> {
-            String[] challenges = challengePref.getString(PREFERENCE_KEY_CHALLENGE,null).split(",");
+            String[] challenges = challengePref.getString(PREFERENCE_KEY_CHALLENGE, null).split(",");
             LinkedList<Exercise> exerciseList = new LinkedList<>();
 
             for (int i = 0; i < Integer.parseInt(challenges[4]); i++) {
-                Exercise exercise1 = new Exercise(challenges[0],Integer.parseInt(challenges[1]));
-                Exercise exercise2 = new Exercise(challenges[2],Integer.parseInt(challenges[3]));
+                Exercise exercise1 = new Exercise(challenges[0], Integer.parseInt(challenges[1]));
+                Exercise exercise2 = new Exercise(challenges[2], Integer.parseInt(challenges[3]));
                 exerciseList.add(exercise1);
                 exerciseList.add(exercise2);
             }
 
             Intent intent = new Intent(getContext(), TrainingActivity.class);
-            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
+            intent.putExtra(TrainingActivity.EXTRA_LIST, exerciseList);
             intent.putExtra(TrainingActivity.EXTRA_REQUEST_CODE, REQUEST_CODE_CHALLENGE);
             startActivityForResult(intent, REQUEST_CODE_CHALLENGE);
 
@@ -119,7 +120,7 @@ public class ChallengeFragment extends Fragment {
         return view;
     }
 
-    void setGif(GifImageView gif,String dailyChallenge){
+    void setGif(GifImageView gif, String dailyChallenge) {
         switch (dailyChallenge) {
             case "swing":
                 gif.setImageResource(R.drawable.kettlebell_swings);
@@ -197,8 +198,17 @@ public class ChallengeFragment extends Fragment {
         return challengeString.toString();
     }
 
-    public void disableGotoBtn(){
+    public void disableGotoBtn() {
         gotoChallengeBtn.setText("今日已完成挑戰");
         gotoChallengeBtn.setEnabled(false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == ChallengeFragment.RESULT_CODE_CHALLENGE) {
+            disableGotoBtn();
+        }
     }
 }

@@ -30,11 +30,12 @@ import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 
 import java.util.List;
 
+import static com.josh.smartkettlebell.ui.main.MainActivity.TAG;
+
 public class DeviceScanActivity extends AppCompatActivity {
     private final int EnableBluetoothRequestCode = 100;
     private final int LocationPermissionRequestCode = 110;
     private final Handler handler = new Handler();
-    private final String TAG = "myTag";
 
     BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
     BluetoothLeScanner scanner = adapter.getBluetoothLeScanner();
@@ -49,7 +50,7 @@ public class DeviceScanActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             //Log.d(TAG, "onScanResult: "+result);
             String name = result.getDevice().getName();
-            if(name != null && name.equals("CC2650 SensorTag")){
+            if (name != null && name.equals("CC2650 SensorTag")) {
                 listAdapter.addDevice(result);
                 listAdapter.notifyDataSetChanged();
             }
@@ -66,6 +67,7 @@ public class DeviceScanActivity extends AppCompatActivity {
             //Log.d(TAG, "onScanFailed: ScanFailed error code : " + errorCode);
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +75,9 @@ public class DeviceScanActivity extends AppCompatActivity {
 
         btn_connect = findViewById(R.id.btn_connect);
         btn_connect.setOnClickListener(v -> {
-            if(isScanning){
+            if (isScanning) {
                 btn_connect.setText(R.string.Scan);
-            }else {
+            } else {
                 btn_connect.setText(R.string.Scanning);
             }
             scanDevice();
@@ -85,7 +87,7 @@ public class DeviceScanActivity extends AppCompatActivity {
         rv_deviceList.setAdapter(listAdapter);
         rv_deviceList.setLayoutManager(new LinearLayoutManager(this));
         rv_deviceList.setOnClickListener(e ->
-                Log.d(TAG, "onCreate: "+e.getId()));
+                Log.d(TAG, "onCreate: " + e.getId()));
 
         requestEnableLocation();//要求打開位置
         requestEnableBluetooth();//要求打開藍芽
@@ -95,8 +97,8 @@ public class DeviceScanActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == EnableBluetoothRequestCode) {
-            if(resultCode == 0)
+        if (requestCode == EnableBluetoothRequestCode) {
+            if (resultCode == 0)
                 finish();
 //                requestEnableBluetooth();
             else
@@ -108,58 +110,60 @@ public class DeviceScanActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == LocationPermissionRequestCode){
-            if(grantResults[0] == -1) // 0 : granted ,1 : denied
+        if (requestCode == LocationPermissionRequestCode) {
+            if (grantResults[0] == -1) // 0 : granted ,1 : denied
                 requestPermissionFineLocation();
 
         }
     }
 
-    private void scanDevice(){
+    private void scanDevice() {
         Log.d(TAG, "scanDevice: scan device");
         requestEnableLocation();
-        if(isScanning){
+        if (isScanning) {
             isScanning = false;
             scanner.stopScan(scanCallback);
-        }else{
-            isScanning =true;
+        } else {
+            isScanning = true;
             scanner.startScan(scanCallback);
 
             handler.postDelayed(() -> {
                 btn_connect.setText(getText(R.string.scan));
                 isScanning = false;
                 scanner.stopScan(scanCallback);
-            },10000);
+            }, 10000);
         }
     }
-    private void requestPermissionFineLocation(){
-        if(ContextCompat.checkSelfPermission(getBaseContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+    private void requestPermissionFineLocation() {
+        if (ContextCompat.checkSelfPermission(getBaseContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(DeviceScanActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LocationPermissionRequestCode);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LocationPermissionRequestCode);
         }
     }
-    private void requestEnableBluetooth(){
-        if(adapter == null || !adapter.isEnabled()){
+
+    private void requestEnableBluetooth() {
+        if (adapter == null || !adapter.isEnabled()) {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(intent, EnableBluetoothRequestCode);
         }
     }
 
-    private void requestEnableLocation(){
-        LocationManager manager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+    private void requestEnableLocation() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert manager != null;
 
 
         boolean is_gps_enabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if(!is_gps_enabled){
+        if (!is_gps_enabled) {
             new AlertDialog.Builder(this)
                     .setMessage("Location Service is disabled")
-                    .setPositiveButton("Setting", (dialogInterface,paramInt) -> {
+                    .setPositiveButton("Setting", (dialogInterface, paramInt) -> {
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
                     })
-                    .setNegativeButton("Cancel", (dialogInterface, param)-> finish())
+                    .setNegativeButton("Cancel", (dialogInterface, param) -> finish())
                     .show();
         }
 //        boolean is_network_enabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -173,12 +177,13 @@ public class DeviceScanActivity extends AppCompatActivity {
 //            startActivityForResult(intent, EnableBluetoothRequestCode);
 //        }
     }
-    public void onItemClicked(String address){
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putString(SettingsFragment.KEY_DEVICE_ADDRESS,address)
-                    .apply();
-            finish();
+
+    public void onItemClicked(String address) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(SettingsFragment.KEY_DEVICE_ADDRESS, address)
+                .apply();
+        finish();
     }
 
 }

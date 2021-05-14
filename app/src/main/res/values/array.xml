@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array
-        name = "tabs_name">
+    <array name="tabs_name">
         <item>Home</item>
         <item>Training</item>
         <item>Schedule</item>

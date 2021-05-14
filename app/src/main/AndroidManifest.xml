@@ -18,8 +18,9 @@
         android:roundIcon="@drawable/ic_kettlebell"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.main.schedule.EventsAdderDialogActivity"
-            android:theme="@android:style/Theme.Material.Dialog"/>
+        <activity
+            android:name=".ui.main.schedule.EventsAdderDialogActivity"
+            android:theme="@android:style/Theme.Material.Dialog" />
         <activity android:name=".ui.main.training.trainingplan.training.TrainingActivity" />
         <activity android:name=".ui.main.training.trainingplan.addexercise.AddExerciseActivity" />
         <activity

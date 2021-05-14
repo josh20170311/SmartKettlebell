@@ -14,7 +14,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "myTag";
     public static final String ACTION_UPDATE_SETTINGS_PREFERENCE = "com.josh.smartkettlebell.ACTION_UPDATE_SETTINGS_PREFERENCE";
-    public static final int RESULT_CODE_SETTING = 300 ;
+    public static final int RESULT_CODE_SETTING = 300;
     Fragment trainingFragment;
     Fragment scheduleFragment;
     Fragment dataFragment;
@@ -55,13 +54,21 @@ public class MainActivity extends AppCompatActivity {
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            myBluetoothService = ((MyBluetoothService.LocalBinder)service).getService();
-            Log.d(TAG, "onServiceConnected: "+myBluetoothService);
+            myBluetoothService = ((MyBluetoothService.LocalBinder) service).getService();
+            Log.d(TAG, "onServiceConnected: " + myBluetoothService);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected: ");
+        }
+    };
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Objects.equals(intent.getAction(), ACTION_UPDATE_SETTINGS_PREFERENCE)) {
+                ((SettingsFragment) settingFragment).update();
+            }
         }
     };
 
@@ -73,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         drawerLayout = findViewById(R.id.drawerLayout);
-        topAppBar  = findViewById(R.id.topAppBar);
+        topAppBar = findViewById(R.id.topAppBar);
         navigationView = findViewById(R.id.navigationView);
         topAppBar.setNavigationOnClickListener(v -> drawerLayout.open());
 
@@ -81,34 +88,35 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: finished");
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_UPDATE_SETTINGS_PREFERENCE);
-        registerReceiver(receiver,filter);
-        bindService(new Intent(this, MyBluetoothService.class),connection,BIND_AUTO_CREATE);
+        registerReceiver(receiver, filter);
+        bindService(new Intent(this, MyBluetoothService.class), connection, BIND_AUTO_CREATE);
     }
-    private void setNavigation(){
+
+    private void setNavigation() {
         navigationView.setNavigationItemSelectedListener(item -> {
-            switch(item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.page_training:
-                    if(trainingFragment == null)
+                    if (trainingFragment == null)
                         trainingFragment = new TrainingFragment();
                     currentFragment = trainingFragment;
                     break;
                 case R.id.page_schedule:
-                    if(scheduleFragment == null)
+                    if (scheduleFragment == null)
                         scheduleFragment = new ScheduleFragment();
                     currentFragment = scheduleFragment;
                     break;
                 case R.id.page_data:
-                    if(dataFragment == null)
+                    if (dataFragment == null)
                         dataFragment = new DataFragment();
                     currentFragment = dataFragment;
                     break;
                 case R.id.page_challenge:
-                    if(challengeFragment == null)
+                    if (challengeFragment == null)
                         challengeFragment = new ChallengeFragment();
                     currentFragment = challengeFragment;
                     break;
                 case R.id.page_setting:
-                    if(settingFragment == null)
+                    if (settingFragment == null)
                         settingFragment = new SettingsFragment();
                     currentFragment = settingFragment;
                     break;
@@ -121,50 +129,37 @@ public class MainActivity extends AppCompatActivity {
         trainingFragment = new TrainingFragment();
         changeFragment(trainingFragment);
     }
-    private void changeFragment(Fragment f){
+
+    private void changeFragment(Fragment f) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.main_container, f);
         transaction.commit();
     }
-    BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(Objects.equals(intent.getAction(), ACTION_UPDATE_SETTINGS_PREFERENCE)){
-                ((SettingsFragment)settingFragment).update();
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
-                .putString(SettingsFragment.KEY_DEVICE_STATE,"Disconnected")
+                .putString(SettingsFragment.KEY_DEVICE_STATE, "Disconnected")
                 .apply();
 
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: result");
-        if(requestCode == PERMISSION_REQUEST_CODE_CALENDER){
+        if (requestCode == PERMISSION_REQUEST_CODE_CALENDER) {
             Log.d(TAG, "onRequestPermissionsResult: requestCode");
-            if(grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){{
-                Log.d(TAG, "onRequestPermissionsResult: readEvent");
-                ((ScheduleFragment)scheduleFragment).readEvent();
-            }
-            }else{
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                {
+                    Log.d(TAG, "onRequestPermissionsResult: readEvent");
+                    ((ScheduleFragment) scheduleFragment).readEvent();
+                }
+            } else {
                 Log.d(TAG, "onRequestPermissionsResult: permission denied");
-                Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == ChallengeFragment.RESULT_CODE_CHALLENGE){
-            ((ChallengeFragment)challengeFragment).disableGotoBtn();
-        }
-    }
 }

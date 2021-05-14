@@ -51,8 +51,8 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="start">Start</string>
     <string name="Complete">Complete</string>
-<!-- Events Adder-->
-<!--    <string name="app_name">Adding an event</string>-->
+    <!-- Events Adder-->
+    <!--    <string name="app_name">Adding an event</string>-->
     <string-array name="exercises">
         <item>划船</item>
         <item>硬舉</item>

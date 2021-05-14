@@ -1,9 +1,6 @@
 package com.josh.smartkettlebell.model;
 
-import androidx.constraintlayout.widget.ConstraintSet;
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedList;
 
 public class Exercise implements Serializable {
@@ -34,12 +31,12 @@ public class Exercise implements Serializable {
         this.name = name;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
     public int getNumber() {
         return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public LinkedList<MotionData> getMotionData() {

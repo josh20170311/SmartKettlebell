@@ -4,11 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.RawRes;
 
 import com.josh.smartkettlebell.R;
 
@@ -23,7 +20,7 @@ public class ZhangPhilGifView extends androidx.appcompat.widget.AppCompatImageVi
 
     }
 
-    public void setGif(@DrawableRes int id){
+    public void setGif(@DrawableRes int id) {
         mMovie = Movie.decodeStream(getResources().openRawResource(id));
     }
 
@@ -44,18 +41,6 @@ public class ZhangPhilGifView extends androidx.appcompat.widget.AppCompatImageVi
             }
             int relTime = (int) ((now - mMovieStart) % dur);
             mMovie.setTime(relTime);
-            float mWidth = mMovie.width();
-            float mHeight = mMovie.height();
-            float r = mWidth/mHeight;
-            int cHeight = getMeasuredHeight();
-            int cWidth = getMeasuredWidth();
-            int real_width = (int) (cHeight*r);
-            int real_height = getHeight();
-
-//            System.out.println(cHeight);
-//            System.out.println(cWidth);
-//            System.out.println(mMovie.height());
-//            System.out.println(mMovie.width());
             mMovie.draw(canvas, 0, 0);
 
             invalidate();

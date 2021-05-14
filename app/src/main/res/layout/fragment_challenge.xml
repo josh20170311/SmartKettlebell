@@ -138,12 +138,12 @@
         android:id="@+id/gotochallengebtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_marginTop="100dp"
         android:width="250dp"
-        android:textColor="@color/white"
         android:background="@drawable/button_rounde"
-        android:text="馬上前往挑戰" />
+        android:gravity="center"
+        android:text="馬上前往挑戰"
+        android:textColor="@color/white" />
 
 </LinearLayout>

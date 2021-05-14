@@ -31,19 +31,27 @@ import com.josh.smartkettlebell.db.MyDBHelper;
 import com.josh.smartkettlebell.service.MyBluetoothService;
 import com.josh.smartkettlebell.ui.main.MainActivity;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
-import com.josh.smartkettlebell.util.*;
+import com.josh.smartkettlebell.util.Feature;
+import com.josh.smartkettlebell.util.RandomForestClassifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static com.josh.smartkettlebell.ui.main.MainActivity.TAG;
+
 public class DeviceBrowserActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private static final String TAG = "myTag : DeviceInfoActivity : ";
-    public static final String EXTRA_DEVICE_ADDRESS = "com.josh.smartkattlebell.ui.device.EXTRA_DEVICE_ADDRESS";
-    public static final String EXTRA_DEVICE_NAME = "com.josh.smartkattlebell.ui.device.EXTRA_DEVICE_NAME";
-
+    public static final String EXTRA_DEVICE_ADDRESS = "com.josh.smartkettlebell.ui.device.EXTRA_DEVICE_ADDRESS";
+    public static final String EXTRA_DEVICE_NAME = "com.josh.smartkettlebell.ui.device.EXTRA_DEVICE_NAME";
+    private final MyDBHelper dbHelper = new MyDBHelper(this, MyContract.DATABASE_NAME);
+    private final IntentFilter filter = new IntentFilter();
+    int i = 0; // index of received data
+    double[][] window = new double[6][20];
+    int window_count = 0;
+    String[] predict_array = new String[]{"划船", "推舉", "擺盪", "深蹲", "硬舉", "靜置"};
+    String predict_string = "N/A";
     private LineChart chart_acc, chart_facc, chart_ahrs, chart_gyr, chart_mag;
     private TextView tv_motionData;
     private TextView tv_status;
@@ -51,26 +59,105 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
     private EditText et_name;
     private MyBluetoothService mBluetoothService;
     private String deviceAddress;
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            //Log.d(TAG, "onReceive: DeviceInfoReceiver : action : "+action);
+
+            switch (Objects.requireNonNull(action)) {
+                case MyBluetoothService.ACTION_CONNECTED:
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putString(SettingsFragment.KEY_DEVICE_ADDRESS, deviceAddress)
+                            .putString(SettingsFragment.KEY_DEVICE_STATE, "Connected")
+                            .apply();
+                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
+
+                    runOnUiThread(() -> tv_status.setText(R.string.connected));
+                    break;
+                case MyBluetoothService.ACTION_DISCONNECTED:
+                    runOnUiThread(() -> tv_status.setText(R.string.disconnected));
+                    break;
+                case MyBluetoothService.ACTION_SHOW_DATA:
+                    float[] data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_DATA);
+                    float[] facc_data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_FACC_DATA);
+                    float[] ahrs_data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_AHRS_DATA);
+//                    long timeStamp = intent.getLongExtra(MyBluetoothService.EXTRA_MOTION_TIMESTAMP,-1);
+                    assert data != null;
+                    assert facc_data != null;
+                    assert ahrs_data != null;
+
+                    for (int i = 0; i < window.length; i++) {
+                        window[i][window_count] = data[i];
+                    }
+                    window_count++;
+                    if (window_count >= window.length) {
+                        double[] features = Feature.getFeature_6axis(window[0], window[1], window[2], window[3], window[4], window[5]);
+                        window_count = 0;
+                        int p = RandomForestClassifier.predict(features);
+                        predict_string = predict_array[p];
+                    }
+                    runOnUiThread(() -> {
+                        updateCharts(data, facc_data, ahrs_data);
+                        tv_motionData.setText("");
+                        for (float d : data)
+                            tv_motionData.append(d + "\n");
+                        for (float d : facc_data)
+                            tv_motionData.append(d + "\n");
+                        for (float d : ahrs_data)
+                            tv_motionData.append(d + "\n");
+                        tv_motionData.append(predict_string);
+                    });
+                    break;
+                case MyBluetoothService.ACTION_SERVICE_DISCOVERED:
+//                    mBluetoothService.displayService();
+                    break;
+            }
+
+        }
+    };
     private String deviceName;
-    private final MyDBHelper dbHelper = new MyDBHelper(this, MyContract.DATABASE_NAME);
+    private boolean isRecording = false;
+    private boolean serviceBound = false;
+    private final ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            mBluetoothService = ((MyBluetoothService.LocalBinder) binder).getService();
+            Log.d(TAG, "onServiceConnected: " + mBluetoothService);
+            serviceBound = true;
+            if (!mBluetoothService.init()) {
+                Log.d(TAG, "on ServiceConnected: init failed");
+                finish();
+            }
+            mBluetoothService.connectToDevice(deviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected: " + name);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_browser);
 
         deviceAddress = getIntent().getStringExtra(EXTRA_DEVICE_ADDRESS);
-        Log.d(TAG, "Device Info : onCreate: "+deviceAddress);
-        if(deviceAddress == null || deviceAddress.equals("")){
+        Log.d(TAG, "Device Info : onCreate: " + deviceAddress);
+        if (deviceAddress == null || deviceAddress.equals("")) {
             deviceAddress = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getString(SettingsFragment.KEY_DEVICE_ADDRESS,"");
-            if(deviceAddress.equals("")||deviceAddress.equals(" ")){
+                    .getString(SettingsFragment.KEY_DEVICE_ADDRESS, "");
+            if (deviceAddress.equals("") || deviceAddress.equals(" ")) {
                 finish();
                 return;
             }
         }
 
         deviceName = getIntent().getStringExtra(EXTRA_DEVICE_NAME);
-        if(deviceName == null){
+        if (deviceName == null) {
             deviceName = "";
         }
 
@@ -81,12 +168,13 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         filter.addAction(MyBluetoothService.ACTION_DISCONNECTED);
         filter.addAction(MyBluetoothService.ACTION_SHOW_DATA);
         filter.addAction(MyBluetoothService.ACTION_SERVICE_DISCOVERED);
-        registerReceiver(receiver,filter);
+        registerReceiver(receiver, filter);
 
-        bindService(new Intent(this,MyBluetoothService.class),connection,BIND_AUTO_CREATE);
+        bindService(new Intent(this, MyBluetoothService.class), connection, BIND_AUTO_CREATE);
 
     }
-    void setView(){
+
+    void setView() {
         chart_acc = findViewById(R.id.chart_acc);
         chart_facc = findViewById(R.id.chart_facc);
         chart_ahrs = findViewById(R.id.chart_ahrs);
@@ -114,7 +202,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         EditText et_number = findViewById(R.id.et_number);
     }
 
-    private void setChart(LineChart chart){
+    private void setChart(LineChart chart) {
         {
             chart.setBackgroundColor(Color.WHITE);
             chart.getDescription().setEnabled(false);
@@ -124,13 +212,12 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
             chart.setPinchZoom(true);
 
 
-
-            LineDataSet x,y,z;
-            if(chart.equals(chart_ahrs)){
+            LineDataSet x, y, z;
+            if (chart.equals(chart_ahrs)) {
                 x = new LineDataSet(new ArrayList<>(), "roll");
                 y = new LineDataSet(new ArrayList<>(), "pitch");
                 z = new LineDataSet(new ArrayList<>(), "yaw");
-            }else{
+            } else {
                 x = new LineDataSet(new ArrayList<>(), "x");
                 y = new LineDataSet(new ArrayList<>(), "y");
                 z = new LineDataSet(new ArrayList<>(), "z");
@@ -175,29 +262,26 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
             yAxis = chart.getAxisLeft();
             chart.getAxisRight().setEnabled(false);
             //yAxis.enableGridDashedLine(10f,10f,0f);
-            if(chart.equals(chart_gyr)){
+            if (chart.equals(chart_gyr)) {
                 yAxis.setAxisMaximum(250f);
                 yAxis.setAxisMinimum(-250f);
-            }
-            else if(chart.equals(chart_mag)){
+            } else if (chart.equals(chart_mag)) {
                 yAxis.setAxisMaximum(4800);
                 yAxis.setAxisMinimum(-4800f);
-            }
-            else if(chart.equals(chart_ahrs)){
+            } else if (chart.equals(chart_ahrs)) {
                 yAxis.setAxisMaximum(180f);
                 yAxis.setAxisMinimum(-180f);
-            }else{
+            } else {
                 yAxis.setAxisMaximum(2f);
                 yAxis.setAxisMinimum(-2f);
             }
         }
     }
 
-    int i = 0; // index of received data
-    private void updateCharts(float[] data, float[] facc_data, float[] ahrs_data){
+    private void updateCharts(float[] data, float[] facc_data, float[] ahrs_data) {
 //        int entryCount = chart_acc.getLineData().getDataSetByIndex(0).getEntryCount();
 //        Log.d(TAG, "updateCharts: i : " + i);
-        if(i > 49){
+        if (i > 49) {
             chart_acc.getLineData().getDataSetByIndex(0).removeEntry(0);
             chart_acc.getLineData().getDataSetByIndex(1).removeEntry(0);
             chart_acc.getLineData().getDataSetByIndex(2).removeEntry(0);
@@ -254,7 +338,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         chart_facc.invalidate();
         chart_ahrs.invalidate();
     }
-    private void setMaxMin(LineChart chart){
+
+    private void setMaxMin(LineChart chart) {
         float[] a_max = new float[3];
         float[] a_min = new float[3];
         float max = Float.MIN_VALUE;
@@ -265,11 +350,11 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
         a_min[0] = chart.getLineData().getDataSetByIndex(0).getYMin();
         a_min[1] = chart.getLineData().getDataSetByIndex(1).getYMin();
         a_min[2] = chart.getLineData().getDataSetByIndex(2).getYMin();
-        for(float x:a_min)
-            if(x < min)
+        for (float x : a_min)
+            if (x < min)
                 min = x;
-        for(float y:a_max)
-            if(y > max)
+        for (float y : a_max)
+            if (y > max)
                 max = y;
         Log.d(TAG, "setMaxMin: " + Arrays.toString(a_max));
         Log.d(TAG, "setMaxMin: " + Arrays.toString(a_min));
@@ -283,75 +368,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
 
     }
 
-    private final IntentFilter filter = new IntentFilter();
-
-    private boolean isRecording = false;
-
-    double[][] window = new double[6][20];
-    int window_count = 0;
-    String[] predict_array = new String[]{"划船", "推舉", "擺盪", "深蹲", "硬舉", "靜置"};
-    String predict_string = "N/A";
-
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            //Log.d(TAG, "onReceive: DeviceInfoReceiver : action : "+action);
-
-            switch(Objects.requireNonNull(action)){
-                case MyBluetoothService.ACTION_CONNECTED:
-                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .edit()
-                            .putString(SettingsFragment.KEY_DEVICE_ADDRESS,deviceAddress)
-                            .putString(SettingsFragment.KEY_DEVICE_STATE,"Connected")
-                            .apply();
-                    sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_SETTINGS_PREFERENCE));
-
-                    runOnUiThread(() -> tv_status.setText(R.string.connected));
-                    break;
-                case MyBluetoothService.ACTION_DISCONNECTED:
-                    runOnUiThread(()-> tv_status.setText(R.string.disconnected));
-                    break;
-                case MyBluetoothService.ACTION_SHOW_DATA:
-                    float[] data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_DATA);
-                    float[] facc_data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_FACC_DATA);
-                    float[] ahrs_data = intent.getFloatArrayExtra(MyBluetoothService.EXTRA_MOTION_AHRS_DATA);
-//                    long timeStamp = intent.getLongExtra(MyBluetoothService.EXTRA_MOTION_TIMESTAMP,-1);
-                    assert data != null;
-                    assert facc_data != null;
-                    assert ahrs_data != null;
-
-                    for (int i = 0; i < window.length; i++) {
-                        window[i][window_count] = data[i];
-                    }
-                    window_count++;
-                    if(window_count>=window.length) {
-                        double[] features = Feature.getFeature_6axis(window[0], window[1], window[2], window[3], window[4], window[5]);
-                        window_count=0;
-                        int p = RandomForestClassifier.predict(features);
-                        predict_string = predict_array[p];
-                    }
-                    runOnUiThread(()->{
-                        updateCharts(data, facc_data, ahrs_data);
-                        tv_motionData.setText("");
-                        for(float d:data)
-                            tv_motionData.append(d+"\n");
-                        for(float d:facc_data)
-                            tv_motionData.append(d+"\n");
-                        for(float d:ahrs_data)
-                            tv_motionData.append(d+"\n");
-                        tv_motionData.append(predict_string);
-                    });
-                    break;
-                case MyBluetoothService.ACTION_SERVICE_DISCOVERED:
-//                    mBluetoothService.displayService();
-                    break;
-            }
-
-        }
-    };
-
-
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause: ");
@@ -361,51 +377,30 @@ public class DeviceBrowserActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mBluetoothService != null)
+        if (mBluetoothService != null)
             mBluetoothService.disconnectDevice();
 
-        if(serviceBound)
+        if (serviceBound)
             unbindService(connection);
 
         Log.d(TAG, "onDestroy:");
     }
 
-    private boolean serviceBound = false;
-    private final ServiceConnection connection = new ServiceConnection(){
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            mBluetoothService = ((MyBluetoothService.LocalBinder)binder).getService();
-            Log.d(TAG, "onServiceConnected: "+mBluetoothService);
-            serviceBound = true;
-            if(!mBluetoothService.init()){
-                Log.d(TAG, "on ServiceConnected: init failed");
-                finish();
-            }
-            mBluetoothService.connectToDevice(deviceAddress);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected: "+name);
-        }
-    };
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if(id == R.id.btn_recordData){
-            if(isRecording){
+        if (id == R.id.btn_recordData) {
+            if (isRecording) {
                 isRecording = false;
                 btn_recordData.setText(R.string.recordData);
                 btn_recordData.setBackgroundColor(getColor(R.color.colorPrimary));
                 mBluetoothService.stopRecord();
-            }else{
+            } else {
 //                recordId = dbHelper.createRecord(et_tag.getText().toString());
                 btn_recordData.setText(R.string.recording);
                 btn_recordData.setBackgroundColor(Color.RED);
                 isRecording = true;
-                mBluetoothService.startRecord(et_name.getText().toString(),0,0);
+                mBluetoothService.startRecord(et_name.getText().toString(), 0, 0);
             }
         }
     }

@@ -10,16 +10,16 @@
             <!--邊框-->
             <stroke android:width="0dip" android:color="#538394" />
             <!--漸層顏色-->
-            <gradient android:angle="-90" android:startColor="#FF359A" android:endColor="#FF79BC"  />
+            <gradient android:angle="-90" android:endColor="#FF79BC" android:startColor="#FF359A" />
         </shape>
     </item>
 
     <!-- 預設時 -->
     <item android:color="@android:color/black">
-        <shape android:shape="rectangle"  >
+        <shape android:shape="rectangle">
             <corners android:radius="150dip" />
             <stroke android:width="0dip" android:color="#FFFFFF" />
-            <gradient android:angle="-90" android:startColor="	#FF60AF" android:endColor="	#FFC1E0"  />
+            <gradient android:angle="-90" android:endColor="	#FFC1E0" android:startColor="	#FF60AF" />
         </shape>
     </item>
 

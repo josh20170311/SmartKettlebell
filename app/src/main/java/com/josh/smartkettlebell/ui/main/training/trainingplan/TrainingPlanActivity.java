@@ -37,8 +37,9 @@ public class TrainingPlanActivity extends AppCompatActivity {
     public static int RESULT_CODE_ADD_EXERCISE = 301;
     public static int REQUEST_CODE_EDIT_EXERCISE = 400;
     public static int RESULT_CODE_EDIT_EXERCISE = 401;
+    public static int REQUEST_CODE_START_TRAINING = 500;
 
-    Button btn_start,btn_start_without_device;
+    Button btn_start, btn_start_without_device;
     FloatingActionButton fab;
     RecyclerView rv;
     ItemTouchHelper touchHelper;
@@ -59,15 +60,15 @@ public class TrainingPlanActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
 
         touchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP|ItemTouchHelper.DOWN,
-                ItemTouchHelper.RIGHT){
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
 
-                Objects.requireNonNull(rv.getAdapter()).notifyItemMoved(viewHolder.getAdapterPosition(),target.getAdapterPosition());
-                Collections.swap(exerciseList,viewHolder.getAdapterPosition(),target.getAdapterPosition());
+                Objects.requireNonNull(rv.getAdapter()).notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                Collections.swap(exerciseList, viewHolder.getAdapterPosition(), target.getAdapterPosition());
 
 
                 return true;
@@ -75,7 +76,7 @@ public class TrainingPlanActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                if(direction == ItemTouchHelper.RIGHT){
+                if (direction == ItemTouchHelper.RIGHT) {
                     exerciseList.remove(viewHolder.getAdapterPosition());
                     Objects.requireNonNull(rv.getAdapter()).notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
@@ -87,51 +88,54 @@ public class TrainingPlanActivity extends AppCompatActivity {
             }
         });
         touchHelper.attachToRecyclerView(rv);
-        rv.setAdapter(new ExerciseListAdapter(exerciseList,touchHelper,this));
+        rv.setAdapter(new ExerciseListAdapter(exerciseList, touchHelper, this));
 
         fab.setOnClickListener(e -> {
             Intent intent = new Intent(this, AddExerciseActivity.class);
-            intent.putExtra(EXTRA_REQUEST_CODE,REQUEST_CODE_ADD_EXERCISE);
+            intent.putExtra(EXTRA_REQUEST_CODE, REQUEST_CODE_ADD_EXERCISE);
             startActivityForResult(intent, REQUEST_CODE_ADD_EXERCISE);
         });
 
         btn_start.setOnClickListener(e -> {
             SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(this);
-            String address = preference.getString(SettingsFragment.KEY_DEVICE_ADDRESS,null);
-            if(address == null || address.equals("N/A")){
+            String address = preference.getString(SettingsFragment.KEY_DEVICE_ADDRESS, null);
+            if (address == null || address.equals("N/A")) {
                 new AlertDialog.Builder(this)
                         .setTitle("Please Set a Device")
                         .setPositiveButton("OK", (dialog, which) -> {
-                                Intent intent = new Intent(this, DeviceScanActivity.class);
-                                intent.setAction(ACTION_SET_DEVICE);
-                                startActivity(intent);
-                            })
+                            Intent intent = new Intent(this, DeviceScanActivity.class);
+                            intent.setAction(ACTION_SET_DEVICE);
+                            startActivity(intent);
+                        })
                         .show();
                 return;
             }
-            if(exerciseList.size() == 0){
+            if (exerciseList.size() == 0) {
                 new AlertDialog.Builder(this)
                         .setTitle("Please Set at lest an Exercise")
-                        .setPositiveButton("OK",(dialog,which)->{})
+                        .setPositiveButton("OK", (dialog, which) -> {
+                        })
                         .show();
                 return;
             }
             Intent intent = new Intent(this, TrainingActivity.class);
-            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
-            startActivity(intent);
+            intent.putExtra(TrainingActivity.EXTRA_LIST, exerciseList);
+            intent.putExtra(TrainingActivity.EXTRA_REQUEST_CODE,REQUEST_CODE_START_TRAINING);
+            startActivityForResult(intent, REQUEST_CODE_START_TRAINING);
         });
 
         btn_start_without_device.setOnClickListener(e -> {
-            if(exerciseList.size() == 0){
+            if (exerciseList.size() == 0) {
                 new AlertDialog.Builder(this)
                         .setTitle("Please Set at lest an Exercise")
-                        .setPositiveButton("OK",(dialog,which)->{})
+                        .setPositiveButton("OK", (dialog, which) -> {
+                        })
                         .show();
                 return;
             }
             Intent intent = new Intent(this, TrainingActivity.class);
-            intent.putExtra(TrainingActivity.EXTRA_LIST,exerciseList);
-            startActivity(intent);
+            intent.putExtra(TrainingActivity.EXTRA_LIST, exerciseList);
+            startActivityForResult(intent, REQUEST_CODE_START_TRAINING);
         });
 
 
@@ -143,20 +147,22 @@ public class TrainingPlanActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_CODE_ADD_EXERCISE){
+        if (resultCode == RESULT_CODE_ADD_EXERCISE) {
             String name = data.getStringExtra(EXTRA_EXERCISE_NAME);
-            int number = data.getIntExtra(EXTRA_EXERCISE_NUMBER,-1);
+            int number = data.getIntExtra(EXTRA_EXERCISE_NUMBER, -1);
 
             exerciseList.add(new Exercise(name, number));
             rv.getAdapter().notifyDataSetChanged();
-        }else if(resultCode == RESULT_CODE_EDIT_EXERCISE){
-            String name =data.getStringExtra(EXTRA_EXERCISE_NAME);
-            int number = data.getIntExtra(EXTRA_EXERCISE_NUMBER,-1);
-            int position = data.getIntExtra(EXTRA_EXERCISE_POSITION,-1);
+        } else if (resultCode == RESULT_CODE_EDIT_EXERCISE) {
+            String name = data.getStringExtra(EXTRA_EXERCISE_NAME);
+            int number = data.getIntExtra(EXTRA_EXERCISE_NUMBER, -1);
+            int position = data.getIntExtra(EXTRA_EXERCISE_POSITION, -1);
             Exercise exercise = exerciseList.get(position);
             exercise.setName(name);
             exercise.setNumber(number);
             rv.getAdapter().notifyItemChanged(position);
+        } else if (requestCode == REQUEST_CODE_START_TRAINING && resultCode == TrainingActivity.RESULT_CODE_FINISH_TRAINING) {
+            finish();
         }
 
     }

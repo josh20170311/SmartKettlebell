@@ -1,29 +1,16 @@
 package com.josh.smartkettlebell.ui.main.challenge;
 
-import androidx.appcompat.app.ActionBar;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
 import com.josh.smartkettlebell.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
-import pl.droidsonroids.gif.GifImageView;
 
 /*
     已搬運至ChallengeFragment
 
  */
-public class dailyChanllenge extends AppCompatActivity {
+public class dailyChallenge extends AppCompatActivity {
 //    TextView textView, timeText, chanllengeText, chanllengeText2, chanllengeTimes, chanllengeTimes2, Set;
 //    GifImageView gif1, gif2;
 //    Button gotochanllengeBtn;

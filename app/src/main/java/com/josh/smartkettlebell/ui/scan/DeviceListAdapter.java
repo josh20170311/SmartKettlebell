@@ -15,17 +15,14 @@ import com.josh.smartkettlebell.R;
 import java.util.LinkedList;
 
 
-public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceViewHolder>{
-
-
-    private static final String TAG = "myTAG";
+public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceViewHolder> {
     private final LinkedList<ScanResult> deviceList = new LinkedList<>();
     private Context context;
 
     @NonNull
     @Override
     public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_device,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_device, parent, false);
         context = parent.getContext();
         return new DeviceViewHolder(view);
     }
@@ -37,7 +34,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         holder.tv_itemName.setText(name);
         holder.tv_itemAddr.setText(address);
         holder.tv_itemRssi.setText(String.valueOf(deviceList.get(position).getRssi()));
-        holder.itemView.setOnClickListener(e -> ((DeviceScanActivity)context).onItemClicked(address));
+        holder.itemView.setOnClickListener(e -> ((DeviceScanActivity) context).onItemClicked(address));
     }
 
     @Override
@@ -45,18 +42,18 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         return deviceList.size();
     }
 
-    public void addDevice(ScanResult r){
-        for(ScanResult rr:deviceList){
-            if(rr.getDevice().getAddress().equals(r.getDevice().getAddress())) {
+    public void addDevice(ScanResult r) {
+        for (ScanResult rr : deviceList) {
+            if (rr.getDevice().getAddress().equals(r.getDevice().getAddress())) {
                 deviceList.remove(rr);
                 break;
             }
         }
-        deviceList.add(0,r);
+        deviceList.add(0, r);
     }
 
 
-    public static class DeviceViewHolder extends RecyclerView.ViewHolder{
+    public static class DeviceViewHolder extends RecyclerView.ViewHolder {
         TextView tv_itemName;
         TextView tv_itemRssi;
         TextView tv_itemAddr;

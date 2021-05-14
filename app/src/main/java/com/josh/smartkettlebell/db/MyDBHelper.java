@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.icu.text.AlphabeticIndex;
 
+import java.util.Calendar;
 import java.util.Date;
 
-import static com.josh.smartkettlebell.db.MyContract.*;
+import static com.josh.smartkettlebell.db.MyContract.DataEntry;
+import static com.josh.smartkettlebell.db.MyContract.RecordEntry;
+import static com.josh.smartkettlebell.db.MyContract.TrainingEntry;
 
 public class MyDBHelper extends SQLiteOpenHelper {
 
@@ -20,9 +22,21 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor getTrainings(){
+    public Cursor getTrainings() {
         return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s ;",
                 TrainingEntry.TABLE_NAME), new String[]{});
+    }
+
+    public Cursor getTrainingsOfToday() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        String startTime = String.valueOf(c.getTimeInMillis());
+        c.add(Calendar.DATE, 1);
+        String endTime = String.valueOf(c.getTimeInMillis());
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s >= ? AND %s < ?;",
+                TrainingEntry.TABLE_NAME, TrainingEntry.COLUMN_DATE, TrainingEntry.COLUMN_DATE), new String[]{startTime, endTime});
     }
 
     public Cursor getRecords() {
@@ -32,12 +46,12 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     public Cursor getRecords(long TrainingId) {
         return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s = ? ;",
-                RecordEntry.TABLE_NAME,RecordEntry.COLUMN_TRAINING_ID), new String[]{TrainingId + ""});
+                RecordEntry.TABLE_NAME, RecordEntry.COLUMN_TRAINING_ID), new String[]{TrainingId + ""});
     }
 
     public Cursor getData(long RecordId) {
         return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s = ? ;",
-                DataEntry.TABLE_NAME,DataEntry.COLUMN_RECORD_ID), new String[]{RecordId + ""});
+                DataEntry.TABLE_NAME, DataEntry.COLUMN_RECORD_ID), new String[]{RecordId + ""});
     }
 
     public void insertData(float[] data, float[] facc_data, long recordId, long timeStamp) {
@@ -50,7 +64,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
             values.put(columns[i], data[i]);
         }
 
-        if (facc_data != null){
+        if (facc_data != null) {
             for (int i = columns.length - 3; i < columns.length; i++) {
                 values.put(columns[i], facc_data[i - columns.length + 3]);
             }
@@ -58,20 +72,20 @@ public class MyDBHelper extends SQLiteOpenHelper {
         getWritableDatabase().insert(DataEntry.TABLE_NAME, null, values);
     }
 
-    public long createRecord(String exerciseName,long trainingID,int number) {
+    public long createRecord(String exerciseName, long trainingID, int number) {
         ContentValues values = new ContentValues();
         values.put(RecordEntry.COLUMN_TIMESTAMP, new Date().getTime());
-        values.put(RecordEntry.COLUMN_TRAINING_ID,trainingID);
+        values.put(RecordEntry.COLUMN_TRAINING_ID, trainingID);
         values.put(RecordEntry.COLUMN_EXERCISE_NAME, exerciseName);
         values.put(RecordEntry.COLUMN_NUMBER, number);
         return getWritableDatabase().insert(RecordEntry.TABLE_NAME, null, values);
     }
 
-    public long createTraining(long duration){
+    public long createTraining(long duration) {
         ContentValues values = new ContentValues();
-        values.put(TrainingEntry.COLUMN_DATE,new Date().getTime());
-        values.put(TrainingEntry.COLUMN_DURATION,duration);
-        return getWritableDatabase().insert(TrainingEntry.TABLE_NAME,null,values);
+        values.put(TrainingEntry.COLUMN_DATE, new Date().getTime());
+        values.put(TrainingEntry.COLUMN_DURATION, duration);
+        return getWritableDatabase().insert(TrainingEntry.TABLE_NAME, null, values);
     }
 
     public void deleteRecord(String id) {
