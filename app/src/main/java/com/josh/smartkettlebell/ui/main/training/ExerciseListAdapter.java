@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,7 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
         String number = cursor_exercise.getString(cursor_exercise.getColumnIndex(MyContract.RecordEntry.COLUMN_NUMBER));
         holder.tv_name.setText(name);
         holder.tv_number.setText(number);
+        setImage(name,holder.iv_mini_photo);
     }
 
     @Override
@@ -50,11 +52,33 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_name;
         TextView tv_number;
+        ImageView iv_mini_photo;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_name = itemView.findViewById(R.id.tv_exercise_item_name);
             tv_number = itemView.findViewById(R.id.tv_exercise_item_number);
+            iv_mini_photo = itemView.findViewById(R.id.iv_exercise_mini_photo);
+        }
+    }
+
+    void setImage(String name, ImageView iv){
+        switch (name){
+            case "row":
+                iv.setImageResource(R.drawable.row);
+                break;
+            case "push":
+                iv.setImageResource(R.drawable.push);
+                break;
+            case "deadlift":
+                iv.setImageResource(R.drawable.deadlift);
+                break;
+            case "squat":
+                iv.setImageResource(R.drawable.squat);
+                break;
+            case "swing":
+                iv.setImageResource(R.drawable.swing);
+                break;
         }
     }
 

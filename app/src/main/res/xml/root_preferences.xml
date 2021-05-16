@@ -18,7 +18,7 @@
             app:key="Sensor Browser"
             app:title="Sensor Browser">
             <intent
-                android:targetClass="com.josh.smartkettlebell.ui.device.DeviceInfoActivity"
+                android:targetClass="com.josh.smartkettlebell.ui.device.DeviceBrowserActivity"
                 android:targetPackage="com.josh.smartkettlebell" />
         </Preference>
     </PreferenceCategory>
