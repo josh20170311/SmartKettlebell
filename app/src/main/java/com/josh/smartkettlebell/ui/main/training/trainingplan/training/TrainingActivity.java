@@ -184,15 +184,15 @@ public class TrainingActivity extends AppCompatActivity {
         map_gif.put("deadlift", R.drawable.deadlift_gif);
         map_gif.put("squat", R.drawable.squat_gif);
         map_gif.put("swing", R.drawable.swing_gif);
-        map_setting.put("push", new Counter.Setting(-1,
+        map_setting.put("push", new Counter.Setting( 225,
+                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_GYR_X));
+        map_setting.put("row", new Counter.Setting(-0.8f,
                 Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
-        map_setting.put("row", new Counter.Setting(-1,
-                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
-        map_setting.put("deadlift", new Counter.Setting(-1,
-                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
-        map_setting.put("squat", new Counter.Setting(-1,
-                Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
-        map_setting.put("swing", new Counter.Setting(-1,
+        map_setting.put("deadlift", new Counter.Setting(-1.2f,
+                Counter.Setting.Target.VALLEY, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("squat", new Counter.Setting(-1.2f,
+                Counter.Setting.Target.VALLEY, Counter.Setting.TYPE_ACC_X));
+        map_setting.put("swing", new Counter.Setting(-0.25f,
                 Counter.Setting.Target.PEAK, Counter.Setting.TYPE_ACC_X));
     }
 

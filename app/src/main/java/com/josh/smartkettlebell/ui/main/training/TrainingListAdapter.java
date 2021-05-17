@@ -60,6 +60,11 @@ public class TrainingListAdapter extends RecyclerView.Adapter<TrainingListAdapte
         notifyDataSetChanged();
     }
 
+    public int getTrainingCount(){
+        return cursor_training.getCount();
+    }
+
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_start_time;
         TextView tv_end_time;

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public class ScheduleFragment extends Fragment {
     FloatingActionButton fab;
     ListView lv_event;
     SwipeRefreshLayout swipeRefreshLayout;
+    ImageView iv_no_schedule;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class ScheduleFragment extends Fragment {
         fab = view.findViewById(R.id.fab);
         lv_event = view.findViewById(R.id.list);
         swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
+
+        iv_no_schedule = view.findViewById(R.id.iv_no_schedule);
 
 
         if (hasPermission(getContext(), Manifest.permission.READ_CALENDAR) && hasPermission(getContext(), Manifest.permission.WRITE_CALENDAR)) {
@@ -96,6 +100,11 @@ public class ScheduleFragment extends Fragment {
                 return v;
             }
         };
+        if(aa.getCount() == 0){
+            iv_no_schedule.setVisibility(View.VISIBLE);
+        }else{
+            iv_no_schedule.setVisibility(View.INVISIBLE);
+        }
         lv_event.setAdapter(aa);
     }
 
