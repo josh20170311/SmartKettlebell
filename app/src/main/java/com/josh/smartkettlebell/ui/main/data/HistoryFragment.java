@@ -19,7 +19,7 @@ import com.josh.smartkettlebell.db.MyContract;
 import com.josh.smartkettlebell.db.MyDBHelper;
 
 
-public class DataFragment extends Fragment {
+public class HistoryFragment extends Fragment {
 
 
     int len = 3;//陣列長度
@@ -34,7 +34,7 @@ public class DataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_data, container, false);
+        View view = inflater.inflate(R.layout.fragment_history, container, false);
 
 //        final String[][] movement = {{"深蹲","15"}, {"硬舉","20"},{"擺盪","0"}};//movement and times in array
         final String[][] movement;

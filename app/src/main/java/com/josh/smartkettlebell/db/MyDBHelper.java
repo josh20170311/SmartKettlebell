@@ -39,6 +39,21 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 TrainingEntry.TABLE_NAME, TrainingEntry.COLUMN_DATE, TrainingEntry.COLUMN_DATE), new String[]{startTime, endTime});
     }
 
+    public Cursor getTrainingsOfTheDay(int year,int month,int dayOfMonth) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR,year);
+        c.set(Calendar.MONTH,month);
+        c.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        String startTime = String.valueOf(c.getTimeInMillis());
+        c.add(Calendar.DATE, 1);
+        String endTime = String.valueOf(c.getTimeInMillis());
+        return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s >= ? AND %s < ?;",
+                TrainingEntry.TABLE_NAME, TrainingEntry.COLUMN_DATE, TrainingEntry.COLUMN_DATE), new String[]{startTime, endTime});
+    }
+
     public Cursor getRecords() {
         return getReadableDatabase().rawQuery(String.format("SELECT * FROM %s ;",
                 RecordEntry.TABLE_NAME), new String[]{});

@@ -25,7 +25,7 @@ public class TrainingListAdapter extends RecyclerView.Adapter<TrainingListAdapte
     MyDBHelper myDBHelper;
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.TAIWAN);
 
-    TrainingListAdapter(Context context) {
+    public TrainingListAdapter(Context context) {
         this.context = context;
         myDBHelper = new MyDBHelper(context, MyContract.DATABASE_NAME);
         cursor_training = myDBHelper.getTrainingsOfToday();
@@ -46,7 +46,12 @@ public class TrainingListAdapter extends RecyclerView.Adapter<TrainingListAdapte
         long id = cursor_training.getLong(cursor_training.getColumnIndex(MyContract.TrainingEntry._ID));
         holder.tv_start_time.setText(dateFormat.format(new Date(startTime)));
         holder.tv_end_time.setText(dateFormat.format(new Date(endTime)));
-        holder.rv_exerciseList.setLayoutManager(new LinearLayoutManager(context));
+        holder.rv_exerciseList.setLayoutManager(new LinearLayoutManager(context){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         holder.rv_exerciseList.setAdapter(new ExerciseListAdapter(context, id));
     }
 
@@ -57,6 +62,11 @@ public class TrainingListAdapter extends RecyclerView.Adapter<TrainingListAdapte
 
     public void update() {
         cursor_training = myDBHelper.getTrainingsOfToday();
+        notifyDataSetChanged();
+    }
+
+    public void update(int year,int month, int dayOfMonth){
+        cursor_training = myDBHelper.getTrainingsOfTheDay(year, month, dayOfMonth);
         notifyDataSetChanged();
     }
 

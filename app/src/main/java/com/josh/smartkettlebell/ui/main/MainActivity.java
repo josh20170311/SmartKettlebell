@@ -26,7 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.josh.smartkettlebell.R;
 import com.josh.smartkettlebell.service.MyBluetoothService;
 import com.josh.smartkettlebell.ui.main.challenge.ChallengeFragment;
-import com.josh.smartkettlebell.ui.main.data.DataFragment;
+import com.josh.smartkettlebell.ui.main.data.HistoryFragment_2;
 import com.josh.smartkettlebell.ui.main.schedule.ScheduleFragment;
 import com.josh.smartkettlebell.ui.main.settings.SettingsFragment;
 import com.josh.smartkettlebell.ui.main.training.TrainingFragment;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int RESULT_CODE_SETTING = 300;
     Fragment trainingFragment;
     Fragment scheduleFragment;
-    Fragment dataFragment;
+    Fragment historyFragment;
     Fragment challengeFragment;
     Fragment settingFragment;
     Fragment currentFragment;
@@ -105,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
                         scheduleFragment = new ScheduleFragment();
                     currentFragment = scheduleFragment;
                     break;
-                case R.id.page_data:
-                    if (dataFragment == null)
-                        dataFragment = new DataFragment();
-                    currentFragment = dataFragment;
+                case R.id.page_history:
+                    if (historyFragment == null)
+                        historyFragment = new HistoryFragment_2();
+                    currentFragment = historyFragment;
                     break;
                 case R.id.page_challenge:
                     if (challengeFragment == null)
